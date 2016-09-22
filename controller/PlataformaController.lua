@@ -11,9 +11,10 @@ local plataformas = {}
 
 function Plataforma.load()
 
-	criaColisor();
+--	criaColisor();
 
 	local nChao = larguraTela/128;
+	nChao = nChao * 2;
 
 	for i = 0, nChao do
 		plataformas[i] = display.newImage("assets/plataforma.png");
@@ -21,32 +22,27 @@ function Plataforma.load()
 		plataformas[i].anchorY = 1;
 
 		plataformas[i].x = i * 128;
-		plataformas[i].y = alturaTela
+		plataformas[i].y = alturaTela + 96;
 
 		plataformas[i]:scale(0.5, 0.5);
+
+		fisica.addBody(plataformas[i], "static", {shape = shape, bounce = 0});
+		plataformas[i].name = "plataforma";
 	end
 
-end
-
-function criaColisor()
-	local x = display.contentCenterX;
-	local y = alturaTela - 123;
-	local w = larguraTela;
-	local h = 10;
-	local colisorPlataforma = display.newRect(x, y, w, h);
-	colisorPlataforma.alpha = 0;
-	fisica.addBody(colisorPlataforma, "static", {bounde = 0});
 end
 
 function move(event)
-	for i = 0, #plataformas do
+	local num = #plataformas;
+	local metade = num * 0.5;
+	for i = 0, num do
 
 		local this = plataformas[i];
+		this.x = this.x - 10;
 
-		plataformas[i]:translate(this.x-10, 0);
 	end
 end
 
-timer.performWithDelay( 500, move, 0 )
+timer.performWithDelay(1, move, 0 )
 
 return Plataforma;
