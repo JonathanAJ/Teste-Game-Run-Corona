@@ -1,4 +1,8 @@
+local fisica = require("physics");
+
 local Player = {}
+
+local shape = { -30, -10, 30, -10, 30, 62, -30, 62 }
 
 local confSprites = {
 	width = 128,
@@ -26,13 +30,15 @@ local animacoesPersonagem = {
 
 function Player.load()
 	local spritesPersonagem = graphics.newImageSheet("assets/sprite_sheet.png", confSprites);
-	local personagem = display.newSprite(spritesPersonagem, animacoesPersonagem);
+	local player = display.newSprite(spritesPersonagem, animacoesPersonagem);
 
-	personagem.x = 10;
-	personagem.y = display.contentHeight/2;
+	player.anchorX = 0;
+	player.anchorY = 0;
 
-	personagem:setSequence("correndo");
-	personagem:play();
+	player:setSequence("correndo");
+	player:play();
+
+	fisica.addBody(player, {shape = shape, bounce = 0});
 end
 
 return Player;
