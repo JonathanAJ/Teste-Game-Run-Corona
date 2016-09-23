@@ -14,14 +14,14 @@ function Plataforma.load()
 --	criaColisor();
 
 	local nChao = larguraTela/128;
-	nChao = nChao * 2;
+	nChao = nChao * 10;
 
 	for i = 0, nChao do
 		plataformas[i] = display.newImage("assets/plataforma.png");
 		plataformas[i].anchorX = 0;
 		plataformas[i].anchorY = 1;
 
-		plataformas[i].x = i * 128;
+		plataformas[i].x = i * (128 * math.random(2));
 		plataformas[i].y = alturaTela + 96;
 
 		plataformas[i]:scale(0.5, 0.5);
