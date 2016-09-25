@@ -21,7 +21,8 @@ function Plataforma.load()
 		plataformas[i].anchorX = 0;
 		plataformas[i].anchorY = 1;
 
-		plataformas[i].x = i * (128 * math.random(2));
+		plataformas[i].x = i * (128);
+		--plataformas[i].x = i * (128 * math.random(2));
 		plataformas[i].y = alturaTela + 96;
 
 		plataformas[i]:scale(0.5, 0.5);

@@ -22,7 +22,8 @@ local animacoesPersonagem = {
 	{
 		name = "pulando",
     	frames= { 10, 11, 12, 13},
-		time = 1000
+        loopCount = 1,
+		time = 250
 	},
 	{
 		name = "escorregando",
@@ -41,16 +42,19 @@ function Player.load()
 
 	player.y = alturaTela - 32;
 
-
 	player:setSequence("correndo");
 	player:play();
 
-	fisica.addBody(player, "dynamic", {shape = shape, bounce = 0, density = 2});
+	fisica.addBody(player, "dynamic", {shape = shape, bounce = 0, density = 10});
 	player.name = "player";
 	player.isFixedRotation = true;
 end
 
 local noChao = true;
+
+function quedaPlayer()
+	player:applyForce(0, 5000);
+end
 
 function pula(event)
 
@@ -58,25 +62,30 @@ function pula(event)
 		noChao == true and
 		player.y <= alturaTela - 30) then
 		
-		print("pula")
-		noChao = false;
-		player:applyForce(0, -1500);
+		player:setSequence("pulando");
+		player:play();
 
-		timer.performWithDelay(250, quedaPlayer, 1);
+		noChao = false;
+		player:applyForce(0, -10000);
+
+		timer.performWithDelay(100, quedaPlayer, 1);
+		print("pula")
 	end
 end
 
-function quedaPlayer()
-	player:applyForce(0, 1400);
-end
+
 
 Runtime:addEventListener("touch", pula);
 
 function colisaoPlataforma(event)
 	if(event.phase == "began") then
         if(event.object1.name == "plataforma" and
-		   event.object2.name == "player") then
+		   event.object2.name == "player" and noChao == false) then
+
 			noChao = true;
+			player:setSequence("correndo");
+			player:play();
+			print("encosta")
 		end
 	end
 

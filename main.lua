@@ -1,6 +1,6 @@
 local fisica = require("physics");
 fisica.start(true);
--- fisica.setDrawMode("hybrid");
+fisica.setDrawMode("hybrid");
 
 local background = require("controller.BackgroundController");
 background.load();
