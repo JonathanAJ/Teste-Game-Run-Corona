@@ -5,7 +5,9 @@ local larguraTela = display.contentWidth;
 
 local Player = {}
 
-local shape = { -5, -10, 32, -10, 32, 62, -5, 62 }
+local shapeCorrendo = { -5, -10, 32, -10, 32, 62, -5, 62 }
+
+local shapePulando = { -5, -30, 32, -30, 32, 62, -5, 62 }
 
 local confSprites = {
 	width = 128,
@@ -28,7 +30,8 @@ local animacoesPersonagem = {
 	{
 		name = "escorregando",
     	frames= { 14, 15, 16},
-		time = 1000
+        loopCount = 1,
+		time = 250
 	}
 }
 
@@ -45,7 +48,7 @@ function Player.load()
 	player:setSequence("correndo");
 	player:play();
 
-	fisica.addBody(player, "dynamic", {shape = shape, bounce = 0, density = 10});
+	fisica.addBody(player, "dynamic", {shape = shapeCorrendo, bounce = 0, density = 10});
 	player.name = "player";
 	player.isFixedRotation = true;
 end
@@ -53,6 +56,7 @@ end
 local noChao = true;
 
 function quedaPlayer()
+	mudaBody("correndo");
 	player:applyForce(0, 5000);
 end
 
@@ -61,9 +65,10 @@ function pula(event)
 	if(event.phase == "began" and
 		noChao == true and
 		player.y <= alturaTela - 30) then
-		
+
 		player:setSequence("pulando");
 		player:play();
+		mudaBody("pulando");
 
 		noChao = false;
 		player:applyForce(0, -10000);
@@ -73,7 +78,18 @@ function pula(event)
 	end
 end
 
+function mudaBody(tipo)
+	fisica.removeBody(player);
+	if(tipo == "pulando") then
+		fisica.addBody(player, "dynamic", {shape = shapePulando, bounce = 0, density = 10});
+	
+	elseif (tipo == "correndo") then
+		fisica.addBody(player, "dynamic", {shape = shapeCorrendo, bounce = 0, density = 10});
 
+	end
+	player.name = "player";
+	player.isFixedRotation = true;
+end
 
 Runtime:addEventListener("touch", pula);
 
