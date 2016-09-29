@@ -5,9 +5,11 @@ local larguraTela = display.contentWidth;
 
 local Player = {}
 
+local shapePlayerChao = { -32, 55, 32, 55, 32, 62, -32, 62 }
+
 local shapeCorrendo = { -5, -10, 32, -10, 32, 62, -5, 62 }
 
-local shapePulando = { -5, -30, 32, -30, 32, 62, -5, 62 }
+local shapePulando = { -5, -60, 32, -60, 32, 62, -5, 62 }
 
 local confSprites = {
 	width = 128,
@@ -38,6 +40,8 @@ local animacoesPersonagem = {
 local spritesPersonagem = graphics.newImageSheet("assets/sprite_sheet.png", confSprites);
 local player = display.newSprite(spritesPersonagem, animacoesPersonagem);
 
+local playerCollisionFront
+
 function Player.load()
 
 	player.anchorX = 0;
@@ -48,16 +52,27 @@ function Player.load()
 	player:setSequence("correndo");
 	player:play();
 
-	fisica.addBody(player, "dynamic", {shape = shapeCorrendo, bounce = 0, density = 10});
+	fisica.addBody(player, "dynamic", {shape = shapePlayerChao, bounce = 0, density = 10});
 	player.name = "player";
 	player.isFixedRotation = true;
+
+	playerCollisionFront = display.newLine(player.x + 110, player.y, player.x + 110, player.y - 75);
 end
+
+function mudaPosicaoCollision()
+	print("muda")
+	playerCollisionFront.x = player.x + 110;
+	playerCollisionFront.y = player.y;
+	playerCollisionFront.x2 = player.x + 110;
+	playerCollisionFront.x2 = player.y - 75;
+end
+
+Runtime:addEventListener("enterFrame", mudaPosicaoCollision)
 
 local noChao = true;
 
 function quedaPlayer()
-	mudaBody("correndo");
-	player:applyForce(0, 5000);
+	player:setLinearVelocity(0, 100);
 end
 
 function pula(event)
@@ -68,25 +83,49 @@ function pula(event)
 
 		player:setSequence("pulando");
 		player:play();
-		mudaBody("pulando");
 
 		noChao = false;
-		player:applyForce(0, -10000);
+		player:setLinearVelocity(0, -250);
 
-		timer.performWithDelay(100, quedaPlayer, 1);
+		timer.performWithDelay(300, quedaPlayer, 1);
 		print("pula")
 	end
 end
 
+local function spriteListener( event )
+    print( event.name, event.target, event.phase, event.target.sequence )
+
+    if(event.phase == "began") then
+    	if(event.target.sequence == "correndo") then
+
+			mudaBody("correndo");
+    	elseif (event.target.sequence == "pulando") then
+
+			mudaBody("pulando");
+    	end
+   	end
+
+end
+
+-- Add sprite listener
+--player:addEventListener( "sprite", spriteListener )
+
 function mudaBody(tipo)
+	
 	fisica.removeBody(player);
+	
+	local bRes
+
 	if(tipo == "pulando") then
-		fisica.addBody(player, "dynamic", {shape = shapePulando, bounce = 0, density = 10});
+		bRes = fisica.addBody(player, "kinematic", {shape = shapePulando, bounce = 0, density = 10});
 	
 	elseif (tipo == "correndo") then
-		fisica.addBody(player, "dynamic", {shape = shapeCorrendo, bounce = 0, density = 10});
+		bRes = fisica.addBody(player, "kinematic", {shape = shapeCorrendo, bounce = 0, density = 10});
 
 	end
+
+	print(bRes)
+
 	player.name = "player";
 	player.isFixedRotation = true;
 end

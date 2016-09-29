@@ -40,7 +40,6 @@ function move(event)
 
 		local this = plataformas[i];
 		this.x = this.x - 10;
-
 	end
 end
 
