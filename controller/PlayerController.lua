@@ -5,11 +5,7 @@ local larguraTela = display.contentWidth;
 
 local Player = {}
 
-local shapePlayerChao = { -32, 55, 32, 55, 32, 62, -32, 62 }
-
-local shapeCorrendo = { -5, -10, 32, -10, 32, 62, -5, 62 }
-
-local shapePulando = { -5, -60, 32, -60, 32, 62, -5, 62 }
+local shapePlayerChao = { -32, 55, 25, 55, 25, 62, -32, 62 }
 
 local confSprites = {
 	width = 128,
@@ -56,15 +52,17 @@ function Player.load()
 	player.name = "player";
 	player.isFixedRotation = true;
 
-	playerCollisionFront = display.newLine(player.x + 110, player.y, player.x + 110, player.y - 75);
+	playerCollisionFront = display.newRect(player.x + 90, player.y - 15, 2, 70);
+	playerCollisionFront.anchorX = 0
+	playerCollisionFront.anchorY = 1
+	playerCollisionFront.alpha = 0
+
+	fisica.addBody(playerCollisionFront, "kinematic")
+
 end
 
 function mudaPosicaoCollision()
-	print("muda")
-	playerCollisionFront.x = player.x + 110;
-	playerCollisionFront.y = player.y;
-	playerCollisionFront.x2 = player.x + 110;
-	playerCollisionFront.x2 = player.y - 75;
+	playerCollisionFront.y = player.y - 15;
 end
 
 Runtime:addEventListener("enterFrame", mudaPosicaoCollision)
@@ -72,7 +70,7 @@ Runtime:addEventListener("enterFrame", mudaPosicaoCollision)
 local noChao = true;
 
 function quedaPlayer()
-	player:setLinearVelocity(0, 100);
+	player:setLinearVelocity(0, 180);
 end
 
 function pula(event)
@@ -85,50 +83,31 @@ function pula(event)
 		player:play();
 
 		noChao = false;
-		player:setLinearVelocity(0, -250);
+		player:setLinearVelocity(0, -380);
 
-		timer.performWithDelay(300, quedaPlayer, 1);
+		timer.performWithDelay(380, quedaPlayer, 1);
 		print("pula")
 	end
 end
 
 local function spriteListener( event )
-    print( event.name, event.target, event.phase, event.target.sequence )
-
     if(event.phase == "began") then
     	if(event.target.sequence == "correndo") then
 
-			mudaBody("correndo");
+			changeSizeColission(65)
+
     	elseif (event.target.sequence == "pulando") then
 
-			mudaBody("pulando");
+			changeSizeColission(100)
+
+    	elseif (event.target.sequence == "escorregando") then
+
+			changeSizeColission(60)
     	end
    	end
-
 end
 
--- Add sprite listener
---player:addEventListener( "sprite", spriteListener )
-
-function mudaBody(tipo)
-	
-	fisica.removeBody(player);
-	
-	local bRes
-
-	if(tipo == "pulando") then
-		bRes = fisica.addBody(player, "kinematic", {shape = shapePulando, bounce = 0, density = 10});
-	
-	elseif (tipo == "correndo") then
-		bRes = fisica.addBody(player, "kinematic", {shape = shapeCorrendo, bounce = 0, density = 10});
-
-	end
-
-	print(bRes)
-
-	player.name = "player";
-	player.isFixedRotation = true;
-end
+player:addEventListener("sprite", spriteListener)
 
 Runtime:addEventListener("touch", pula);
 
@@ -138,6 +117,7 @@ function colisaoPlataforma(event)
 		   event.object2.name == "player" and noChao == false) then
 
 			noChao = true;
+
 			player:setSequence("correndo");
 			player:play();
 			print("encosta")
@@ -147,5 +127,11 @@ function colisaoPlataforma(event)
 end
 
 Runtime:addEventListener("collision", colisaoPlataforma);
+
+function changeSizeColission(size)
+	fisica.removeBody(playerCollisionFront)
+	playerCollisionFront.height = size
+	fisica.addBody(playerCollisionFront, "kinematic")
+end
 
 return Player;
