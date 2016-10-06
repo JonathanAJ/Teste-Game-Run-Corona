@@ -13,6 +13,8 @@ local confSprites = {
 	numFrames = 16
 }
 
+
+
 local animacoesPersonagem = {
 	{
 		name = "correndo",
@@ -73,10 +75,27 @@ function quedaPlayer()
 	player:setLinearVelocity(0, 180);
 end
 
-function pula(event)
+function escorrega()
+	if(noChao == true) then
+		changeSizeColission(45)
+		player:setSequence("escorregando");
+		player:play();
+		player:pause();
+		timer.performWithDelay(500, corre, 1);
+		print("escorrega!")
+	end
+end
 
-	if(event.phase == "began" and
-		noChao == true and
+function corre()
+	player:pause()
+	player:setSequence("correndo");
+	player:play();
+	print("corre!")
+end
+
+function pula()
+
+	if(noChao == true and
 		player.y <= alturaTela - 30) then
 
 		player:setSequence("pulando");
@@ -86,11 +105,14 @@ function pula(event)
 		player:setLinearVelocity(0, -380);
 
 		timer.performWithDelay(380, quedaPlayer, 1);
-		print("pula")
+		print("pula!")
 	end
 end
 
+--Runtime:addEventListener("touch", pula);
+
 local function spriteListener( event )
+
     if(event.phase == "began") then
     	if(event.target.sequence == "correndo") then
 
@@ -99,17 +121,51 @@ local function spriteListener( event )
     	elseif (event.target.sequence == "pulando") then
 
 			changeSizeColission(100)
-
-    	elseif (event.target.sequence == "escorregando") then
-
-			changeSizeColission(60)
+			
     	end
    	end
 end
 
 player:addEventListener("sprite", spriteListener)
 
-Runtime:addEventListener("touch", pula);
+-- Um terço da tela
+local medicaoReferencia = alturaTela * 0.1;
+local yInicio, yFim, yRazao;
+local function swipe(event)
+
+    if ( event.phase == "began" ) then
+        
+		yInicio = event.y
+        -- Code executed when the button is touched
+        print("INICIO : "..yInicio)  -- "event.target" is the touched object
+        
+    elseif ( event.phase == "moved" ) then
+        -- Code executed when the touch is moved over the object
+        print( "Y: " .. event.y )
+    elseif ( event.phase == "ended" ) then
+        -- Code executed when the touch lifts off the object
+        yFim = event.y
+        print("FIM : "..yFim)
+
+        yRazao = yInicio - yFim;
+
+        print("RAZAO : "..yRazao)
+
+        print("MEDICAO : "..medicaoReferencia)
+
+        if math.abs(yRazao) > medicaoReferencia then
+	        if (yRazao < 0) then
+	        	escorrega()
+	        else
+	        	pula()
+	        end
+	    end
+    end
+
+    return true  -- Prevents tap/touch propagation to underlying objects
+end
+
+Runtime:addEventListener("touch", swipe)
 
 function colisaoPlataforma(event)
 	if(event.phase == "began") then
