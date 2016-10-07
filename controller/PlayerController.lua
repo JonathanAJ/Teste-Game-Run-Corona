@@ -84,7 +84,6 @@ function escorrega()
 		changeSizeColission(45)
 		player:setSequence("escorregando");
 		player:play();
-		player:pause();
 		timer.performWithDelay(500, corre, 1);
 		print("escorrega!")
 	end
@@ -92,10 +91,14 @@ end
 
 function corre()
 	escorregando = false;
-	player:pause()
-	player:setSequence("correndo");
-	player:play();
-	print("corre!")
+
+	if( player.sequence == "escorregando" ) then
+		player:setSequence("correndo");
+		player:play();
+		print("corre!")
+	else
+		print("pulo-escorrega")
+	end
 end
 
 function pula()
