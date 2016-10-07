@@ -38,7 +38,7 @@ local animacoesPersonagem = {
 local spritesPersonagem = graphics.newImageSheet("assets/sprite_sheet.png", confSprites);
 local player = display.newSprite(spritesPersonagem, animacoesPersonagem);
 
-local playerCollisionFront
+local playerCollisionFront;
 
 function Player.load()
 
@@ -63,20 +63,24 @@ function Player.load()
 
 end
 
+-- Variáveis das funções
+
+local noChao = true;
+local escorregando = false;
+
 function mudaPosicaoCollision()
 	playerCollisionFront.y = player.y - 15;
 end
 
 Runtime:addEventListener("enterFrame", mudaPosicaoCollision)
 
-local noChao = true;
-
 function quedaPlayer()
 	player:setLinearVelocity(0, 180);
 end
 
 function escorrega()
-	if(noChao == true) then
+	if(noChao == true and escorregando == false) then
+		escorregando = true;
 		changeSizeColission(45)
 		player:setSequence("escorregando");
 		player:play();
@@ -87,6 +91,7 @@ function escorrega()
 end
 
 function corre()
+	escorregando = false;
 	player:pause()
 	player:setSequence("correndo");
 	player:play();
@@ -128,22 +133,21 @@ end
 
 player:addEventListener("sprite", spriteListener)
 
--- Um terço da tela
+-- Um décimo da tela
 local medicaoReferencia = alturaTela * 0.1;
 local yInicio, yFim, yRazao;
+
 local function swipe(event)
 
     if ( event.phase == "began" ) then
         
 		yInicio = event.y
-        -- Code executed when the button is touched
-        print("INICIO : "..yInicio)  -- "event.target" is the touched object
+        print("INICIO : "..yInicio)
         
     elseif ( event.phase == "moved" ) then
-        -- Code executed when the touch is moved over the object
+
         print( "Y: " .. event.y )
-    elseif ( event.phase == "ended" ) then
-        -- Code executed when the touch lifts off the object
+
         yFim = event.y
         print("FIM : "..yFim)
 
@@ -153,13 +157,32 @@ local function swipe(event)
 
         print("MEDICAO : "..medicaoReferencia)
 
-        if math.abs(yRazao) > medicaoReferencia then
+        if (math.abs(yRazao) > medicaoReferencia) then
 	        if (yRazao < 0) then
 	        	escorrega()
 	        else
 	        	pula()
 	        end
 	    end
+
+    elseif ( event.phase == "ended" ) then
+
+        -- yFim = event.y
+        -- print("FIM : "..yFim)
+
+        -- yRazao = yInicio - yFim;
+
+        -- print("RAZAO : "..yRazao)
+
+        -- print("MEDICAO : "..medicaoReferencia)
+
+        -- if math.abs(yRazao) > medicaoReferencia then
+	       --  if (yRazao < 0) then
+	       --  	escorrega()
+	       --  else
+	       --  	pula()
+	       --  end
+	    -- end
     end
 
     return true  -- Prevents tap/touch propagation to underlying objects
