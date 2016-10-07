@@ -31,7 +31,7 @@ local animacoesPersonagem = {
 		name = "escorregando",
     	frames= { 14, 15, 16},
         loopCount = 1,
-		time = 250
+		time = 800
 	}
 }
 
@@ -84,7 +84,7 @@ function escorrega()
 		changeSizeColission(45)
 		player:setSequence("escorregando");
 		player:play();
-		timer.performWithDelay(500, corre, 1);
+		timer.performWithDelay(800, corre, 1);
 		print("escorrega!")
 	end
 end
