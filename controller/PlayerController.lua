@@ -72,7 +72,7 @@ function mudaPosicaoCollision()
 	playerCollisionFront.y = player.y - 15;
 end
 
-Runtime:addEventListener("enterFrame", mudaPosicaoCollision)
+timer.performWithDelay(1, mudaPosicaoCollision, 0)
 
 function quedaPlayer()
 	player:setLinearVelocity(0, 180);
@@ -195,7 +195,7 @@ Runtime:addEventListener("touch", swipe)
 
 function colisaoPlataforma(event)
 	if(event.phase == "began") then
-        if(event.object1.name == "plataforma" and
+        if(event.object1.parent.name == "plataforma" and
 		   event.object2.name == "player" and noChao == false) then
 
 			noChao = true;

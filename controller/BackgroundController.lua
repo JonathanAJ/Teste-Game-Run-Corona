@@ -31,11 +31,11 @@ function Background.load()
 end
 
 function move()
-	bg1.x = bg1.x - 5;
-	bg2.x = bg2.x - 5;
+	bg1:translate(-8, 0)
+	bg2:translate(-8, 0)
 
-	nuvem1.x = nuvem1.x - 2;
-	nuvem2.x = nuvem2.x - 2;
+	nuvem1:translate(-5, 0)
+	nuvem2:translate(-5, 0)
 
 	if(bg1.x <= -(bg1.width)) then
 		bg1.x = bg2.x + bg2.width;

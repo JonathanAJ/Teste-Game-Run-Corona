@@ -7,42 +7,59 @@ local Plataforma = {}
 
 local shape = { -128, 0, 0, 0, 0, 128, -128, 128 }
 
-local plataformas = {}
+local gpBlocos = display.newGroup()
+gpBlocos.name = "plataforma"
+
+-- Define a quantidade de plataformas para uma tela
+local nChao = 6
 
 function Plataforma.load()
 
---	criaColisor();
-
-	local nChao = larguraTela/128;
-	nChao = nChao * 10;
+	-- Cria e popula os colisores das plataformas
 
 	for i = 0, nChao do
-		plataformas[i] = display.newImage("assets/plataforma.png");
-		plataformas[i].anchorX = 0;
-		plataformas[i].anchorY = 1;
+		local novoBloco = display.newImage(gpBlocos, "assets/plataforma.png");
+		novoBloco.anchorX = 0;
+		novoBloco.anchorY = 1;
 
-		plataformas[i].x = i * (128);
-		--plataformas[i].x = i * (128 * math.random(2));
-		plataformas[i].y = alturaTela + 96;
+		novoBloco.x = i * (128);
+		novoBloco.y = alturaTela + 96;
 
-		plataformas[i]:scale(0.5, 0.5);
+		novoBloco:scale(0.5, 0.5);
 
-		fisica.addBody(plataformas[i], "static", {shape = shape, bounce = 0});
-		plataformas[i].name = "plataforma";
+		fisica.addBody(novoBloco, "static", {shape = shape});
+		novoBloco.name = "plataforma"..i + 1;
+		novoBloco.id = i + 1;
+		gpBlocos:insert(novoBloco);
 	end
+end
 
+function update()
+	move()
 end
 
 function move(event)
-	local num = #plataformas;
-	local metade = num * 0.5;
-	for i = 0, num do
+	local num = gpBlocos.numChildren;
+	local novoX;
 
-		local this = plataformas[i];
-		this.x = this.x - 10;
+	local velocidade = 1
+
+	for i = 1, num do
+
+		if(i > 1) then
+			novoX = (gpBlocos[i - 1]).x + 128
+		else
+			novoX = (gpBlocos[nChao + 1]).x + 118
+		end
+
+		if((gpBlocos[i]).x <= -128) then
+			(gpBlocos[i]).x = novoX
+		else
+			(gpBlocos[i]):translate(-10, 0)
+		end
 	end
 end
 
-timer.performWithDelay(1, move, 0 )
+timer.performWithDelay(1, update, 0)
 
 return Plataforma;
