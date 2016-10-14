@@ -32,13 +32,20 @@ function Plataforma.load()
 		novoBloco.id = i + 1;
 		gpBlocos:insert(novoBloco);
 	end
+
+	criaObstaculos()
+end
+
+function criaObstaculos()
+	local gpObstaculos = display.newGroup()
+	gpObstaculos.name = "obstaculo"
 end
 
 function update()
-	move()
+	movePlataforma()
 end
 
-function move(event)
+function movePlataforma(event)
 	local num = gpBlocos.numChildren;
 	local novoX;
 

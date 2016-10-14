@@ -145,20 +145,11 @@ local function swipe(event)
     if ( event.phase == "began" ) then
         
 		yInicio = event.y
-        print("INICIO : "..yInicio)
         
     elseif ( event.phase == "moved" ) then
 
-        print( "Y: " .. event.y )
-
         yFim = event.y
-        print("FIM : "..yFim)
-
         yRazao = yInicio - yFim;
-
-        print("RAZAO : "..yRazao)
-
-        print("MEDICAO : "..medicaoReferencia)
 
         if (math.abs(yRazao) > medicaoReferencia) then
 	        if (yRazao < 0) then
@@ -167,28 +158,9 @@ local function swipe(event)
 	        	pula()
 	        end
 	    end
-
-    elseif ( event.phase == "ended" ) then
-
-        -- yFim = event.y
-        -- print("FIM : "..yFim)
-
-        -- yRazao = yInicio - yFim;
-
-        -- print("RAZAO : "..yRazao)
-
-        -- print("MEDICAO : "..medicaoReferencia)
-
-        -- if math.abs(yRazao) > medicaoReferencia then
-	       --  if (yRazao < 0) then
-	       --  	escorrega()
-	       --  else
-	       --  	pula()
-	       --  end
-	    -- end
     end
 
-    return true  -- Prevents tap/touch propagation to underlying objects
+    return true
 end
 
 Runtime:addEventListener("touch", swipe)
