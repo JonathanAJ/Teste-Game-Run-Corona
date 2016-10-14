@@ -13,8 +13,6 @@ local confSprites = {
 	numFrames = 16
 }
 
-
-
 local animacoesPersonagem = {
 	{
 		name = "correndo",
@@ -60,6 +58,8 @@ function Player.load()
 	playerCollisionFront.alpha = 0
 
 	fisica.addBody(playerCollisionFront, "kinematic")
+	playerCollisionFront.name = "playerCollisionFront"
+	playerCollisionFront.isFixedRotation = true;
 
 end
 
@@ -181,6 +181,17 @@ function colisaoPlataforma(event)
 end
 
 Runtime:addEventListener("collision", colisaoPlataforma);
+
+function colisaoObstaculo(event)
+	if(event.phase == "began") then
+        if(event.object1.parent.name == "obstaculo" and
+		   event.object2.name == "playerCollisionFront") then
+			print("colidiu com obstaculo")
+		end
+	end
+end
+
+Runtime:addEventListener("collision", colisaoObstaculo);
 
 function changeSizeColission(size)
 	fisica.removeBody(playerCollisionFront)
