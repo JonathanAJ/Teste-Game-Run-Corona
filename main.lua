@@ -1,21 +1,10 @@
-local fisica = require("physics");
-fisica.start(true);
--- fisica.setDrawMode("hybrid");
+local composer = require( "composer" )
 
-local background = require("controller.BackgroundController");
-background.load();
+-- Hide the status bar
+display.setStatusBar( display.HiddenStatusBar )
 
-local plataforma = require("controller.PlataformaController");
-plataforma.load();
+-- Seed the random number generator
+math.randomseed( os.time() )
 
-local player = require("controller.PlayerController");
-player.load();
-
-local fps = display.newText("FPS: "..display.fps, 40, 10, native.systemFont, 18)
-
-function printFPS()
-	fps.text = "FPS: "..display.fps
-	fps:setFillColor(255, 0, 0)
-end
-
-Runtime:addEventListener("enterFrame", printFPS)
+-- this will eventually go to the menu scene.
+composer.gotoScene( "menu" )
