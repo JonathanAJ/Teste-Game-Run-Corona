@@ -39,7 +39,7 @@ function Plataforma.load()
 		gpBlocos:insert(novoBloco);
 	end
 
-	criaObstaculos()
+	-- criaObstaculos()
 end
 
 function criaObstaculos()
