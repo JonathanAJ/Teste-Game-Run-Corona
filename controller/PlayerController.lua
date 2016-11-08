@@ -5,54 +5,86 @@ local larguraTela = display.contentWidth;
 
 local Player = {}
 
-local shapePlayerChao = { -32, 55, 25, 55, 25, 62, -32, 62 }
-
 local confSprites = {
 	width = 128,
 	height = 128,
-	numFrames = 16
+	numFrames = 4
 }
 
-local animacoesPersonagem = {
-	{
-		name = "correndo",
-    	frames= { 1, 2, 3, 4, 5, 6, 7, 8, 9},
-		time = 500
-	},
-	{
-		name = "pulando",
-    	frames= { 10, 11, 12, 13},
-        loopCount = 1,
-		time = 250
-	},
-	{
-		name = "escorregando",
-    	frames= { 14, 15, 16},
-        loopCount = 1,
-		time = 800
-	}
-}
+local spritesPersonagem = graphics.newImageSheet("assets/spritesheet.png", confSprites);
 
-local spritesPersonagem = graphics.newImageSheet("assets/sprite_sheet.png", confSprites);
-local player = display.newSprite(spritesPersonagem, animacoesPersonagem);
+local shapePernas = {
+					  -20, 35, -- left-top
+					   25, 35, -- rigth-top
+					   25, 65, -- rigth-bottom
+					  -20, 65  -- left-bottom
+					}
 
-local playerCollisionFront;
+local shapeTorax = {
+					  -5, 15, -- left-top
+					   35, 15, -- rigth-top
+					   35, 45, -- rigth-bottom
+					  -5, 45  -- left-bottom
+					}
+
+local shapeBracos = {
+					  -10, 15, -- left-top
+					   40, 15, -- rigth-top
+					   40, 25, -- rigth-bottom
+					  -10, 25  -- left-bottom
+					}
+
+local shapeCabeca = {
+					  -10, -20, -- left-top
+					   20, -20, -- rigth-top
+					   20, 10, -- rigth-bottom
+					  -10, 10  -- left-bottom
+					}
+local pernas
+local torax
+local cabeca
+local bracos
+local playerCollisionFront
 
 function Player.load()
 
-	player.anchorX = 0;
-	player.anchorY = 1;
+	pernas = display.newImageRect(spritesPersonagem, 3, 128, 128)
+	pernas.x = display.contentCenterX
+	pernas.y = display.contentCenterY
+	pernas.name = "pernas"
 
-	player.y = alturaTela - 32;
+	torax = display.newImageRect(spritesPersonagem, 4, 128, 128)
+	torax.x = display.contentCenterX - 10
+	torax.y = display.contentCenterY - 10
 
-	player:setSequence("correndo");
-	player:play();
+	cabeca = display.newImageRect(spritesPersonagem, 1, 128, 128)
+	cabeca.x = display.contentCenterX 
+	cabeca.y = display.contentCenterY - 5
 
-	fisica.addBody(player, "dynamic", {shape = shapePlayerChao, bounce = 0, density = 10});
-	player.name = "player";
-	player.isFixedRotation = true;
+	bracos = display.newImageRect(spritesPersonagem, 2, 128, 128)
+	bracos.x = display.contentCenterX - 10
+	bracos.y = display.contentCenterY - 10
 
-	playerCollisionFront = display.newRect(player.x + 90, player.y - 15, 2, 70);
+	fisica.addBody(pernas, "dynamic", {shape = shapePernas, bounce = 0.5});
+	fisica.addBody(torax, "dynamic", {shape = shapeTorax, bounce = 0.5});
+	fisica.addBody(bracos, "dynamic", {shape = shapeBracos, bounce = 0.75});
+	fisica.addBody(cabeca, "dynamic", {shape = shapeCabeca, bounce = 0.5});
+	pernas.isFixedRotation = true;
+
+	local joint = fisica.newJoint("piston", pernas, torax, pernas.x, pernas.y, 0, -1)
+	local joint2 = fisica.newJoint("piston", torax, bracos, torax.x, torax.y, 0, -1)
+	local joint3 = fisica.newJoint("piston", torax, cabeca, torax.x, torax.y, 0, -1)
+
+	joint.isLimitEnabled = true
+	joint:setLimits( -10, -5 )
+
+	joint2.isLimitEnabled = true
+	joint2:setLimits( -15, -5 )
+
+	joint3.isLimitEnabled = true
+	joint3:setLimits( -5, -2 )
+
+	playerCollisionFront = display.newRect(pernas.x + 90, pernas.y - 15, 2, 70);
 	playerCollisionFront.anchorX = 0
 	playerCollisionFront.anchorY = 1
 	playerCollisionFront.alpha = 0
@@ -69,21 +101,19 @@ local noChao = true;
 local escorregando = false;
 
 function mudaPosicaoCollision()
-	playerCollisionFront.y = player.y - 15;
+	playerCollisionFront.y = pernas.y - 15;
 end
 
 timer.performWithDelay(1, mudaPosicaoCollision, 0)
 
 function quedaPlayer()
-	player:setLinearVelocity(0, 180);
+	-- pernas:setLinearVelocity(0, 180);
 end
 
 function escorrega()
 	if(noChao == true and escorregando == false) then
 		escorregando = true;
 		changeSizeColission(45)
-		player:setSequence("escorregando");
-		player:play();
 		timer.performWithDelay(800, corre, 1);
 		print("escorrega!")
 	end
@@ -92,25 +122,25 @@ end
 function corre()
 	escorregando = false;
 
-	if( player.sequence == "escorregando" ) then
-		player:setSequence("correndo");
-		player:play();
-		print("corre!")
-	else
-		print("pulo-escorrega")
-	end
+	-- if( player.sequence == "escorregando" ) then
+	-- 	player:setSequence("correndo");
+	-- 	player:play();
+	-- 	print("corre!")
+	-- else
+	-- 	print("pulo-escorrega")
+	-- end
 end
 
 function pula()
 
 	if(noChao == true and
-		player.y <= alturaTela - 30) then
-
-		player:setSequence("pulando");
-		player:play();
+		pernas.y <= alturaTela - 30) then
 
 		noChao = false;
-		player:setLinearVelocity(0, -380);
+
+		pernas:applyForce( 0, -6, pernas.x, pernas.y )
+		torax:applyForce( 0, -4, torax.x, torax.y )
+		cabeca:applyForce( 0, -2, cabeca.x, cabeca.y )
 
 		timer.performWithDelay(380, quedaPlayer, 1);
 		print("pula!")
@@ -119,22 +149,22 @@ end
 
 --Runtime:addEventListener("touch", pula);
 
-local function spriteListener( event )
+-- local function spriteListener( event )
 
-    if(event.phase == "began") then
-    	if(event.target.sequence == "correndo") then
+--     if(event.phase == "began") then
+--     	if(event.target.sequence == "correndo") then
 
-			changeSizeColission(65)
+-- 			changeSizeColission(65)
 
-    	elseif (event.target.sequence == "pulando") then
+--     	elseif (event.target.sequence == "pulando") then
 
-			changeSizeColission(100)
+-- 			changeSizeColission(100)
 			
-    	end
-   	end
-end
+--     	end
+--    	end
+-- end
 
-player:addEventListener("sprite", spriteListener)
+-- player:addEventListener("sprite", spriteListener)
 
 -- Um décimo da tela
 local medicaoReferencia = alturaTela * 0.1;
@@ -168,12 +198,10 @@ Runtime:addEventListener("touch", swipe)
 function colisaoPlataforma(event)
 	if(event.phase == "began") then
         if(event.object1.parent.name == "plataforma" and
-		   event.object2.name == "player" and noChao == false) then
+		   event.object2.name == "pernas" and noChao == false) then
 
 			noChao = true;
 
-			player:setSequence("correndo");
-			player:play();
 			print("encosta")
 		end
 	end
