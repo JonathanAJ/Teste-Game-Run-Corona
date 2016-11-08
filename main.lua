@@ -1,15 +1,15 @@
+
 local fisica = require("physics");
 fisica.start(true);
 --fisica.setDrawMode("hybrid");
 
-local background = require("controller.BackgroundController");
-background.load();
+local composer = require( "composer" )
 
-local plataforma = require("controller.PlataformaController");
-plataforma.load();
+-- Hide the status bar
+display.setStatusBar( display.HiddenStatusBar )
 
--- local player = require("controller.PlayerController");
--- player.load();
+-- Seed the random number generator
+math.randomseed( os.time() )
 
 local confSprites = {
 	width = 128,
@@ -89,3 +89,7 @@ local function pula(event)
 end
 
 Runtime:addEventListener("tap", pula)
+
+-- this will eventually go to the menu scene.
+composer.gotoScene( "menu" )
+
