@@ -11,7 +11,7 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 local function gotoCutscene()
-	composer.gotoScene( "cutscene.cutscene1" )
+	composer.gotoScene( "scenes.game", "fade", 1000 )
 end
 
 local function gotoCreditos()
@@ -30,9 +30,9 @@ function scene:create( event )
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
     local background = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
-    background:setFillColor(0, 255, 255)
+    background:setFillColor(0.2, 0.8, 0.8)
 
-    local claName = display.newImageRect( sceneGroup, "./Icon.png", 130, 150 )
+    local claName = display.newImageRect( sceneGroup, "assets/logo.png", 130, 150 )
     claName.x = display.contentCenterX
     claName.y = 100
 

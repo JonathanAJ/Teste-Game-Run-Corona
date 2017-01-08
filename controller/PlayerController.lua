@@ -46,22 +46,22 @@ local cabeca
 local bracos
 local playerCollisionFront
 
-function Player.load()
+function Player.load(sceneGroup)
 
-	pernas = display.newImageRect(spritesPersonagem, 3, 128, 128)
+	pernas = display.newImageRect(sceneGroup, spritesPersonagem, 3, 128, 128)
 	pernas.x = display.contentCenterX
 	pernas.y = display.contentCenterY
 	pernas.name = "pernas"
 
-	torax = display.newImageRect(spritesPersonagem, 4, 128, 128)
+	torax = display.newImageRect(sceneGroup, spritesPersonagem, 4, 128, 128)
 	torax.x = display.contentCenterX - 10
 	torax.y = display.contentCenterY - 10
 
-	cabeca = display.newImageRect(spritesPersonagem, 1, 128, 128)
+	cabeca = display.newImageRect(sceneGroup, spritesPersonagem, 1, 128, 128)
 	cabeca.x = display.contentCenterX 
 	cabeca.y = display.contentCenterY - 5
 
-	bracos = display.newImageRect(spritesPersonagem, 2, 128, 128)
+	bracos = display.newImageRect(sceneGroup, spritesPersonagem, 2, 128, 128)
 	bracos.x = display.contentCenterX - 10
 	bracos.y = display.contentCenterY - 10
 
@@ -84,7 +84,7 @@ function Player.load()
 	joint3.isLimitEnabled = true
 	joint3:setLimits( -5, -2 )
 
-	playerCollisionFront = display.newRect(pernas.x + 90, pernas.y - 15, 2, 70);
+	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y - 15, 2, 70);
 	playerCollisionFront.anchorX = 0
 	playerCollisionFront.anchorY = 1
 	playerCollisionFront.alpha = 0

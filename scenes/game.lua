@@ -9,30 +9,29 @@ fisica.start(true);
 -- fisica.setDrawMode("hybrid");
 
 local function endGame()
-    composer.gotoScene( "menu", { time=800, effect="crossFade" } )
+    composer.gotoScene( "scenes.menu", { time=800, effect="crossFade" } )
 end
 
 local function gotoMenu()
-    composer.gotoScene( "menu" )
+    composer.gotoScene( "scenes.menu", { time=800, effect="crossFade" } )
 end
 
 -- create()
 function scene:create( event )
 
+    local sceneGroup = self.view
+
     local background = require("controller.BackgroundController");
-    background.load();
+    background.load(sceneGroup);
 
     local plataforma = require("controller.PlataformaController");
-    plataforma.load();
+    plataforma.load(sceneGroup);
 
     local player = require("controller.PlayerController");
-    player.load();
-
-	local sceneGroup = self.view
-
-	local returnButton = display.newText( sceneGroup, "Return", display.contentCenterX, 10, native.systemFont, 44 )
-    returnButton:setFillColor( 0, 255, 255 )
-
+    player.load(sceneGroup);
+	
+    local returnButton = display.newText(sceneGroup, "Menu", display.contentWidth - 50, 25, native.systemFont, 22)
+    returnButton:setFillColor( 255, 0, 0)
     returnButton:addEventListener( "tap", gotoMenu )
 end
 
@@ -80,7 +79,6 @@ function scene:destroy( event )
 	-- Code here runs prior to the removal of scene's view
 
 end
-
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners

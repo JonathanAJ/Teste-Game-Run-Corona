@@ -1,58 +1,99 @@
 local alturaTela = display.contentHeight;
 local larguraTela = display.contentWidth;
 
+local scale = 0.5;
+local stageWidth = 3240 * scale;
+local stageHeigth = 720 * scale;
+
+local velocidade = 0.7
+
 local Background = {}
 
-local bg1 = display.newImage("assets/bg.png");
-local bg2 = display.newImage("assets/bg.png");
+local ceu = display.newRect(display.contentCenterX, display.contentCenterY, larguraTela, alturaTela);
+ceu:setFillColor(0.2, 0.8, 0.8)
 
-local nuvem1 = display.newImage("assets/nuvens.png");
-local nuvem2 = display.newImage("assets/nuvens.png");
+local clouds1 = display.newImageRect("assets/backgroundLevel1/clouds.png", stageWidth, stageHeigth);
+local clouds2 = display.newImageRect("assets/backgroundLevel1/clouds.png", stageWidth, stageHeigth);
 
-function Background.load()
-	bg1.anchorX = 0;
-	bg1.anchorY = 1;
+local mount1 = display.newImageRect("assets/backgroundLevel1/mount.png", stageWidth, stageHeigth);
+local mount2 = display.newImageRect("assets/backgroundLevel1/mount.png", stageWidth, stageHeigth);
 
-	bg2.anchorX = 0;
-	bg2.anchorY = 1;
+local tree_back1 = display.newImageRect("assets/backgroundLevel1/tree-back.png", stageWidth, stageHeigth);
+local tree_back2 = display.newImageRect("assets/backgroundLevel1/tree-back.png", stageWidth, stageHeigth);
 
-	bg1.y = alturaTela
-	bg2.y = alturaTela
+local ground1 = display.newImageRect("assets/backgroundLevel1/ground.png", stageWidth, stageHeigth);
+local ground2 = display.newImageRect("assets/backgroundLevel1/ground.png", stageWidth, stageHeigth);
 
-	bg2.x = bg1.width;
+local tree_front1 = display.newImageRect("assets/backgroundLevel1/tree-front.png", stageWidth, stageHeigth);
+local tree_front2 = display.newImageRect("assets/backgroundLevel1/tree-front.png", stageWidth, stageHeigth);
 
-	nuvem1.anchorX = 0;
-	nuvem1.anchorY = 0;
+local vulcan1 = display.newImageRect("assets/backgroundLevel1/vulcan.png", stageWidth, stageHeigth);
+local vulcan2 = display.newImageRect("assets/backgroundLevel1/vulcan.png", stageWidth, stageHeigth);
 
-	nuvem2.anchorX = 0;
-	nuvem2.anchorY = 0;
+local tour1 = display.newImageRect("assets/backgroundLevel1/tour.png", stageWidth, stageHeigth);
+local tour2 = display.newImageRect("assets/backgroundLevel1/tour.png", stageWidth, stageHeigth);
 
-	nuvem2.x = nuvem1.width;
+
+local tableParallax = {}
+table.insert(tableParallax, clouds1)
+table.insert(tableParallax, clouds2)
+table.insert(tableParallax, vulcan1)
+table.insert(tableParallax, vulcan2)
+table.insert(tableParallax, tour1)
+table.insert(tableParallax, tour2)
+table.insert(tableParallax, mount1)
+table.insert(tableParallax, mount2)
+table.insert(tableParallax, tree_back1)
+table.insert(tableParallax, tree_back2)
+table.insert(tableParallax, tree_front1)
+table.insert(tableParallax, tree_front2)
+table.insert(tableParallax, ground1)
+table.insert(tableParallax, ground2)
+
+function Background.load(sceneGroup)
+
+	sceneGroup:insert(ceu)
+
+	for i = 1, #tableParallax, 2 do
+
+		local image1 = tableParallax[i]
+		local image2 = tableParallax[i+1]
+
+		sceneGroup:insert(image1)
+		sceneGroup:insert(image2)
+
+		image1.anchorX = 0;
+		image1.anchorY = 0;
+		image2.anchorX = 0;
+		image2.anchorY = 0;
+		image2.x = image1.width;
+	end
 end
 
 function move()
-	bg1:translate(-8, 0)
-	bg2:translate(-8, 0)
 
-	nuvem1:translate(-5, 0)
-	nuvem2:translate(-5, 0)
+	for i = 1, #tableParallax, 2 do
 
-	if(bg1.x <= -(bg1.width)) then
-		bg1.x = bg2.x + bg2.width;
+		local image1 = tableParallax[i]
+		local image2 = tableParallax[i+1]
 
-	elseif(bg2.x <= -(bg2.width)) then
-		bg2.x = bg1.x + bg1.width;
-
+		translateImages(image1, image2, i)
+		verificaImages(image1, image2);
 	end
 
-	if(nuvem1.x <= -(nuvem1.width)) then
-		nuvem1.x = nuvem2.x + nuvem2.width;
+end
 
-	elseif(nuvem2.x <= -(nuvem2.width)) then
-		nuvem2.x = nuvem1.x + nuvem1.width;
+function translateImages(image1, image2, pos)
+	image1:translate((pos*-1)*velocidade, 0)
+	image2:translate((pos*-1)*velocidade, 0)
+end
 
+function verificaImages(image1, image2)
+	if(image1.x <= -(image1.width)) then
+		image1.x = image2.x + image2.width;
+	elseif(image2.x <= -(image2.width)) then
+		image2.x = image1.x + image1.width;
 	end
-
 end
 
 timer.performWithDelay(1, move, 0);

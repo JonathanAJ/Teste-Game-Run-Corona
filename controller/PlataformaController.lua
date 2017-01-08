@@ -13,31 +13,25 @@ local confPlataformSheet = {
 
 local plataformaTilesSheet = graphics.newImageSheet("assets/tiles.png", confPlataformSheet)
 
-local gpBlocos = display.newGroup()
-gpBlocos.name = "plataforma"
+local gpPlataforma = display.newGroup()
+gpPlataforma.name = "plataforma"
 
 local gpObstaculos = display.newGroup()
 gpObstaculos.name = "obstaculo"
 
--- Define a quantidade de plataformas para uma tela
-local nChao = 12
+local chao = display.newRect(gpPlataforma, 0, 0, larguraTela, 70);
 
-function Plataforma.load()
-	-- Cria e popula os colisores das plataformas
-	for i = 0, nChao do
+function Plataforma.load(sceneGroup)
 
-		local novoBloco = display.newImage(gpBlocos, plataformaTilesSheet, 34);
-		novoBloco.anchorX = 0;
-		novoBloco.anchorY = 1;
+	sceneGroup:insert(gpPlataforma)
+	sceneGroup:insert(gpObstaculos)
 
-		novoBloco.x = i * (novoBloco.contentWidth);
-		novoBloco.y = alturaTela;
-
-		fisica.addBody(novoBloco, "static", {bounce = 0});
-		novoBloco.name = "plataforma"..i + 1;
-		novoBloco.id = i + 1;
-		gpBlocos:insert(novoBloco);
-	end
+	chao.anchorX = 0
+	chao.anchorY = 1
+	chao.x = 0
+	chao.y = alturaTela
+	chao:setFillColor(0, 0, 0, 0)
+	fisica.addBody(chao, "static", {bounce = 0});
 
 	-- criaObstaculos()
 end
@@ -68,7 +62,6 @@ function criaObstaculos()
 end
 
 function update()
-	movePlataforma()
 	moveObstaculos()
 end
 
@@ -88,26 +81,6 @@ function moveObstaculos()
 			(gpObstaculos[i]).x = novoX
 		else
 			(gpObstaculos[i]):translate(-10, 0)
-		end
-	end
-end
-
-function movePlataforma()
-	local num = gpBlocos.numChildren;
-	local novoX;
-
-	for i = 1, num do
-
-		if(i > 1) then
-			novoX = (gpBlocos[i - 1]).x + 64
-		else
-			novoX = (gpBlocos[nChao + 1]).x + 54
-		end
-
-		if((gpBlocos[i]).x <= -64) then
-			(gpBlocos[i]).x = novoX
-		else
-			(gpBlocos[i]):translate(-10, 0)
 		end
 	end
 end

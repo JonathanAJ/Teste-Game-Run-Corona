@@ -28,7 +28,7 @@ function scene:create( event )
     local background = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
     background:setFillColor(0, 255, 255)
 
-    local claName = display.newImageRect( sceneGroup, "./Icon.png", 130, 150 )
+    local claName = display.newImageRect( sceneGroup, "assets/logo.png", 130, 150 )
     claName.x = display.contentCenterX
     claName.y = 100
 
@@ -48,7 +48,7 @@ function scene:create( event )
     local menber4 = display.newText( sceneGroup, "Jonathan Alves", display.contentCenterX, 300, native.systemFont, 20 )
     menber4:setFillColor( 1, 1, 1 )
 
-    local returnButton = display.newImageRect( sceneGroup, "./assets/icons/home.png", 32, 32 )
+    local returnButton = display.newImageRect( sceneGroup, "assets/icons/home.png", 32, 32 )
     returnButton.x = display.contentCenterX
     returnButton.y = 340
 
