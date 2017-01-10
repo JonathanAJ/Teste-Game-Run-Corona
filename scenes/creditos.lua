@@ -23,36 +23,50 @@ display.setStatusBar( display.HiddenStatusBar )
 function scene:create( event )
 
 	local sceneGroup = self.view
-	-- Code here runs when the scene is first created but has not yet appeared on screen
+    -- Code here runs when the scene is first created but has not yet appeared on screen
+    
+    local background = require("controller.BackgroundCreditosController");
+    background.load(sceneGroup);
 
-    local background = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
-    background:setFillColor(0, 255, 255)
+    local cred = display.newText( sceneGroup, "Creditos", display.contentCenterX, 55, "3Dventure.ttf", 40 )
+    cred:setFillColor( 0, 0, 0 )
 
-    local claName = display.newImageRect( sceneGroup, "assets/logo.png", 130, 150 )
-    claName.x = display.contentCenterX
-    claName.y = 100
+    local caia = display.newImageRect( sceneGroup, "assets/char/caia.png", 65, 70 )
+    caia.x = 120
+    caia.y = 150
 
-    local gameName = display.newText( sceneGroup, "Run N'Gun", display.contentCenterX, 200, native.systemFont, 30 )
-    gameName:setFillColor( 0, 0, 0 )
+    local menber1 = display.newText( sceneGroup, "Caia", 200, 150, "3Dventure.ttf", 40 )
+    menber1:setFillColor( 0, 0, 0 )
 
-    -- Equipe
-    local menber1 = display.newText( sceneGroup, "Caiã Augusto", display.contentCenterX, 240, native.systemFont, 20 )
-    menber1:setFillColor( 1, 1, 1 )
+    local ianna = display.newImageRect( sceneGroup, "assets/char/ianna.png", 50, 60 )
+    ianna.x = 120
+    ianna.y = 210
 
-    local menber2 = display.newText( sceneGroup, "Ianna Leal", display.contentCenterX, 260, native.systemFont, 20 )
-    menber2:setFillColor( 1, 1, 1 )
+    local menber2 = display.newText( sceneGroup, "Ianna", 210, 210, "3Dventure.ttf", 40 )
+    menber2:setFillColor( 0, 0, 0 )
 
-    local menber3 = display.newText( sceneGroup, "Italo Oliveira", display.contentCenterX, 280, native.systemFont, 20 )
-    menber3:setFillColor( 1, 1, 1 )
+    local italo = display.newImageRect( sceneGroup, "assets/char/italo.png", 65, 70 )
+    italo.x = 370
+    italo.y = 150
 
-    local menber4 = display.newText( sceneGroup, "Jonathan Alves", display.contentCenterX, 300, native.systemFont, 20 )
-    menber4:setFillColor( 1, 1, 1 )
+    local menber3 = display.newText( sceneGroup, "Italo", 470, 150, "3Dventure.ttf", 40 )
+    menber3:setFillColor( 0, 0, 0 )
 
-    local returnButton = display.newImageRect( sceneGroup, "assets/icons/home.png", 32, 32 )
-    returnButton.x = display.contentCenterX
+    local jon = display.newImageRect( sceneGroup, "assets/char/jon.png", 65, 70 )
+    jon.x = 370
+    jon.y = 210
+
+    local menber4 = display.newText( sceneGroup, "Jonathan", 500, 210, "3Dventure.ttf", 40 )
+    menber4:setFillColor( 0, 0, 0 )
+
+    local returnButton = display.newText( sceneGroup, "<<<", 200, 150, "3Dventure.ttf", 40 )
+    returnButton.x = 50
     returnButton.y = 340
 
     returnButton:addEventListener( "tap", gotoMenu )
+
+    local soundEffect = audio.loadSound( "audio/credits5.wav" )
+    -- audio.play( soundEffect )
 
 end
 

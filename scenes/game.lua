@@ -4,6 +4,8 @@ math.randomseed(os.time())
 local composer = require("composer")
 local scene = composer.newScene()
 
+local background;
+
 local fisica = require("physics");
 fisica.start(true);
 -- fisica.setDrawMode("hybrid");
@@ -19,9 +21,11 @@ end
 -- create()
 function scene:create( event )
 
+    print("enter create game")
+
     local sceneGroup = self.view
 
-    local background = require("controller.BackgroundController");
+    background = require("controller.BackgroundController");
     background.load(sceneGroup);
     background.start();
 
@@ -31,8 +35,8 @@ function scene:create( event )
     local player = require("controller.PlayerController");
     player.load(sceneGroup);
 	
-    local returnButton = display.newText(sceneGroup, "Menu", display.contentWidth - 50, 25, native.systemFont, 22)
-    returnButton:setFillColor( 255, 0, 0)
+    local returnButton = display.newText(sceneGroup, "Menu", display.contentWidth - 50, 25, "3Dventure.ttf", 32)
+    returnButton:setFillColor( 0, 0, 0)
     returnButton:addEventListener( "tap", gotoMenu )
 end
 
@@ -48,9 +52,7 @@ function scene:show( event )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
-        physics.start()
-       -- Runtime:addEventListener( "collision", onCollision )
-        gameLoopTimer = timer.performWithDelay( 500, gameLoop, 0 )
+
     end
 end
 
@@ -63,12 +65,14 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        --timer.cancel( gameLoopTimer )
+        
+        background.stop()
+        composer.removeScene("scenes.game")
+        fisica.stop()
 
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen
         --Runtime:removeEventListener( "collision", onCollision )
-         physics.pause()
     end
 end
 
@@ -77,7 +81,8 @@ end
 function scene:destroy( event )
 
 	local sceneGroup = self.view
-	-- Code here runs prior to the removal of scene's view
+
+    print("enter destroy game")
 
 end
 

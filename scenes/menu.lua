@@ -1,7 +1,9 @@
 
-local composer = require( "composer" )
-
+local composer = require("composer")
 local scene = composer.newScene()
+composer.isDebug = true
+
+local background;
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -26,27 +28,29 @@ end
 -- create()
 function scene:create( event )
 
+	print("enter create menu")
+
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
+    background = require("controller.BackgroundMenuController");
+    background.load(sceneGroup);
+    background.start();
 
-    local background = display.newRect(sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
-    background:setFillColor(0.2, 0.8, 0.8)
+    local logoName = display.newImageRect( sceneGroup, "assets/logoname.png", 157, 106 )
+    logoName.x = display.contentCenterX
+    logoName.y = display.contentCenterY-50
 
-    local claName = display.newImageRect( sceneGroup, "assets/logo.png", 130, 150 )
-    claName.x = display.contentCenterX
-    claName.y = 100
-
-    local gameName = display.newText( sceneGroup, "Run N'Gun", display.contentCenterX, 200, native.systemFont, 30 )
-    gameName:setFillColor( 0, 0, 0 )
-
-    local playButton = display.newText( sceneGroup, "Jogar", display.contentCenterX, 250, native.systemFont, 30 )
+    local playButton = display.newText( sceneGroup, "Jogar", display.contentCenterX, 250, "3Dventure.ttf", 40 )
     playButton:setFillColor( 1, 1, 1 )
 
-    local creditosButton = display.newText( sceneGroup, "Creditos", display.contentCenterX, 300, native.systemFont, 30 )
+    local creditosButton = display.newText( sceneGroup, "Creditos", display.contentCenterX, 300, "3Dventure.ttf", 40 )
     creditosButton:setFillColor( 1, 1, 1 )
 
     playButton:addEventListener( "tap", gotoCutscene )
     creditosButton:addEventListener( "tap", gotoCreditos )
+
+    local soundEffect = audio.loadSound( "audio/chiptune-loop.wav" )
+    -- audio.play( soundEffect )
 
 end
 
@@ -75,10 +79,13 @@ function scene:hide( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- Code here runs when the scene is on screen (but is about to go off screen)
+		-- roda assim que a cena for ocultada
+		
+        background.stop()
+		composer.removeScene("scenes.menu")
 
 	elseif ( phase == "did" ) then
-		-- Code here runs immediately after the scene goes entirely off screen
+		-- roda depois que a cena for ocultada
 
 	end
 end
@@ -88,7 +95,9 @@ end
 function scene:destroy( event )
 
 	local sceneGroup = self.view
-	-- Code here runs prior to the removal of scene's view
+
+
+	print("enter destroy menu")
 
 end
 

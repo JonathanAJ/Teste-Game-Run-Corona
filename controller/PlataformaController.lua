@@ -19,7 +19,7 @@ gpPlataforma.name = "plataforma"
 local gpObstaculos = display.newGroup()
 gpObstaculos.name = "obstaculo"
 
-local chao = display.newRect(gpPlataforma, 0, 0, larguraTela, 70);
+local chao = display.newRect(gpPlataforma, 0, 0, larguraTela, 20);
 
 function Plataforma.load(sceneGroup)
 
