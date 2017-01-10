@@ -5,7 +5,7 @@ local scale = 0.5;
 local stageWidth = 3240 * scale;
 local stageHeigth = 720 * scale;
 
-local velocidade = 0.7
+local velocidade = 0.4
 
 local Background = {}
 
@@ -71,21 +71,25 @@ function Background.load(sceneGroup)
 end
 
 function move()
+	local dt = getDeltaTime();
 
 	for i = 1, #tableParallax, 2 do
 
 		local image1 = tableParallax[i]
 		local image2 = tableParallax[i+1]
 
-		translateImages(image1, image2, i)
+		translateImages(image1, image2, i, dt)
 		verificaImages(image1, image2);
 	end
 
 end
 
-function translateImages(image1, image2, pos)
-	image1:translate((pos*-1)*velocidade, 0)
-	image2:translate((pos*-1)*velocidade, 0)
+function translateImages(image1, image2, pos, dt)
+
+	local moviment = ((pos * -1) * velocidade) * dt;
+
+	image1:translate(moviment, 0)
+	image2:translate(moviment, 0)
 end
 
 function verificaImages(image1, image2)
@@ -96,6 +100,21 @@ function verificaImages(image1, image2)
 	end
 end
 
-timer.performWithDelay(1, move, 0);
+local runtime = 0
+ 
+function getDeltaTime()
+    local temp = system.getTimer()
+    local dt = (temp - runtime) / (1000 / 60)
+    runtime = temp
+    return dt
+end
+
+function Background.start()
+	Runtime:addEventListener("enterFrame", move)
+end
+
+function Background.stop()
+	Runtime:removeEventListener("enterFrame", move)
+end
 
 return Background;

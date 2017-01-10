@@ -23,6 +23,7 @@ function scene:create( event )
 
     local background = require("controller.BackgroundController");
     background.load(sceneGroup);
+    background.start();
 
     local plataforma = require("controller.PlataformaController");
     plataforma.load(sceneGroup);
