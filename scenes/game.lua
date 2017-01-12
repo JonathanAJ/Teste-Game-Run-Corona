@@ -4,11 +4,12 @@ math.randomseed(os.time())
 local composer = require("composer")
 local scene = composer.newScene()
 
-local background;
+local background
+local player
 
 local fisica = require("physics");
 fisica.start(true);
--- fisica.setDrawMode("hybrid");
+fisica.setDrawMode("hybrid");
 
 local function endGame()
     composer.gotoScene( "scenes.menu", { time=800, effect="crossFade" } )
@@ -32,7 +33,7 @@ function scene:create( event )
     local plataforma = require("controller.PlataformaController");
     plataforma.load(sceneGroup);
 
-    local player = require("controller.PlayerController");
+    player = require("controller.PlayerController");
     player.load(sceneGroup);
 	
     local returnButton = display.newText(sceneGroup, "Menu", display.contentWidth - 50, 25, "3Dventure.ttf", 32)
@@ -68,7 +69,7 @@ function scene:hide( event )
         
         background.stop()
         composer.removeScene("scenes.game")
-        fisica.stop()
+        player.removeListeners()
 
     elseif ( phase == "did" ) then
         -- Code here runs immediately after the scene goes entirely off screen

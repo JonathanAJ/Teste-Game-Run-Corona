@@ -83,7 +83,7 @@ local options =
         }
     }
 }
-local spritesPersonagem = graphics.newImageSheet( "assets/spritesheet2.png", options )
+local spritesPersonagem = graphics.newImageSheet( "assets/spritesheet.png", options )
 
 local animacaoPersonagem = {
     {
@@ -100,24 +100,35 @@ local cabeca
 local bracos
 local playerCollisionFront
 
+local function atirar(event)
+
+	if(event.x > display.contentCenterX) then
+		print("atirou");
+		torax:applyForce( 2, 0, torax.x, torax.y )
+	end
+
+end
+
 function Player.load(sceneGroup)
 
 	pernas = display.newSprite(sceneGroup, spritesPersonagem, animacaoPersonagem)
+	pernas:setSequence( "correndo" )
+	pernas:play()
 
-	pernas.x = display.contentCenterX
+	pernas.x = 130
 	pernas.y = display.contentCenterY
 	pernas.name = "pernas"
 
 	torax = display.newImage(sceneGroup, spritesPersonagem, 3)
-	torax.x = display.contentCenterX
+	torax.x = 130
 	torax.y = display.contentCenterY - 13
 
 	bracos = display.newImage(sceneGroup, spritesPersonagem, 2)
-	bracos.x = display.contentCenterX + 5
+	bracos.x = 135
 	bracos.y = display.contentCenterY - 15
 
 	cabeca = display.newImage(sceneGroup, spritesPersonagem, 1)
-	cabeca.x = display.contentCenterX 
+	cabeca.x = 130
 	cabeca.y = display.contentCenterY - 40
 
 	fisica.addBody(pernas, "dynamic", {bounce = 0.5});
@@ -148,11 +159,14 @@ function Player.load(sceneGroup)
 	playerCollisionFront.name = "playerCollisionFront"
 	playerCollisionFront.isFixedRotation = true;
 
+
+	Runtime:addEventListener("tap", atirar)
+
 end
 
 -- Variáveis das funções
 
-local noChao = false;
+local noChao = true;
 local escorregando = false;
 
 function mudaPosicaoCollision()
@@ -226,14 +240,16 @@ end
 -- Um décimo da tela
 local medicaoReferencia = alturaTela * 0.1;
 local yInicio, yFim, yRazao;
+local xSwipe;
 
 local function swipe(event)
 
     if ( event.phase == "began" ) then
         
 		yInicio = event.y
+		xSwipe = event.x
         
-    elseif ( event.phase == "moved" ) then
+    elseif ( event.phase == "moved" and xSwipe < display.contentCenterX ) then
 
         yFim = event.y
         yRazao = yInicio - yFim;
@@ -285,6 +301,10 @@ function changeSizeColission(size)
 	fisica.removeBody(playerCollisionFront)
 	playerCollisionFront.height = size
 	fisica.addBody(playerCollisionFront, "kinematic")
+end
+
+function Player.removeListeners()
+	Runtime:removeEventListener( "tap", atirar )
 end
 
 return Player;

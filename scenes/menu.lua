@@ -1,9 +1,12 @@
-
 local composer = require("composer")
 local scene = composer.newScene()
 composer.isDebug = true
 
+local fisica = require("physics");
+
 local background;
+
+local soundEffect = audio.loadSound( "audio/chiptune-loop.wav" )
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -13,7 +16,7 @@ local background;
 -- -----------------------------------------------------------------------------------
 
 local function gotoCutscene()
-	composer.gotoScene( "scenes.game", "fade", 1000 )
+	composer.gotoScene( "scenes.game", "fade", 300 )
 end
 
 local function gotoCreditos()
@@ -29,6 +32,8 @@ end
 function scene:create( event )
 
 	print("enter create menu")
+	
+	fisica.stop(true);
 
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
@@ -49,8 +54,7 @@ function scene:create( event )
     playButton:addEventListener( "tap", gotoCutscene )
     creditosButton:addEventListener( "tap", gotoCreditos )
 
-    local soundEffect = audio.loadSound( "audio/chiptune-loop.wav" )
-    -- audio.play( soundEffect )
+    -- audio.play(soundEffect)
 
 end
 
@@ -79,8 +83,8 @@ function scene:hide( event )
 	local phase = event.phase
 
 	if ( phase == "will" ) then
-		-- roda assim que a cena for ocultada
-		
+		-- roda assim que a cena for ocultada	
+	    audio.stop()		
         background.stop()
 		composer.removeScene("scenes.menu")
 

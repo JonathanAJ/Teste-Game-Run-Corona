@@ -99,8 +99,8 @@ function Background.load(sceneGroup)
 	end
 
 	function move()
-		local dt = getDeltaTime();
 
+		local dt = getDeltaTime();
 		-- print("enter frame game "..dt);
 
 		for i = 1, #tableParallax, 2 do
@@ -108,15 +108,17 @@ function Background.load(sceneGroup)
 			local image1 = tableParallax[i]
 			local image2 = tableParallax[i+1]
 
-			translateImages(image1, image2, i, dt)
 			verificaImages(image1, image2);
+			translateImages(image1, image2, i, dt)
 		end
 
 	end
 
-	function translateImages(image1, image2, pos, dt)
+	function translateImages(image1, image2, pos, delta)
 
-		local moviment = ((pos * -1) * velocidade) * 1;
+		delta = 1 -- algum motivo delta está dando bug
+
+		local moviment = ((pos * -1) * velocidade) * delta;
 
 		image1:translate(moviment, 0)
 		image2:translate(moviment, 0)
