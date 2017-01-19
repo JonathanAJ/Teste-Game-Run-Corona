@@ -3,43 +3,10 @@ local fisica = require("physics");
 local alturaTela = display.contentHeight;
 local larguraTela = display.contentWidth;
 
+local pex = require( "ponywolf.pex" )
+local tiroBasicData = pex.load( "particles/tiro_basic/particle.pex", "particles/tiro_basic/texture.png" )
+
 local Player = {}
-
--- local confSprites = {
--- 	width = 128,
--- 	height = 128,
--- 	numFrames = 4
--- }
-
--- local spritesPersonagem = graphics.newImageSheet("assets/spritesheet.png", confSprites);
-
--- local shapePernas = {
--- 					  -20, 35, -- left-top
--- 					   25, 35, -- rigth-top
--- 					   25, 65, -- rigth-bottom
--- 					  -20, 65  -- left-bottom
--- 					}
-
--- local shapeTorax = {
--- 					  -5, 15, -- left-top
--- 					   35, 15, -- rigth-top
--- 					   35, 45, -- rigth-bottom
--- 					  -5, 45  -- left-bottom
--- 					}
-
--- local shapeBracos = {
--- 					  -10, 15, -- left-top
--- 					   40, 15, -- rigth-top
--- 					   40, 25, -- rigth-bottom
--- 					  -10, 25  -- left-bottom
--- 					}
-
--- local shapeCabeca = {
--- 					  -10, -20, -- left-top
--- 					   20, -20, -- rigth-top
--- 					   20, 10, -- rigth-bottom
--- 					  -10, 10  -- left-bottom
--- 					}
 
 local options =
 {
@@ -99,12 +66,14 @@ local torax
 local cabeca
 local bracos
 local playerCollisionFront
+local playerCollisionBack
 
 local function atirar(event)
 
 	if(event.x > display.contentCenterX) then
 		print("atirou");
-		torax:applyForce( 2, 0, torax.x, torax.y )
+		torax:applyForce( 8, 0, torax.x, torax.y )
+		particula()
 	end
 
 end
@@ -145,23 +114,31 @@ function Player.load(sceneGroup)
 	joint:setLimits( -10, 5 )
 
 	joint2.isLimitEnabled = true
-	joint2:setLimits( -20, 0 )
+	joint2:setLimits( 0, 0 )
 
 	joint3.isLimitEnabled = true
 	joint3:setLimits( -20, -2 )
 
-	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y - 15, 2, 70);
+	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y, 2, 70);
 	playerCollisionFront.anchorX = 0
 	playerCollisionFront.anchorY = 1
 	playerCollisionFront.alpha = 0
+
+	playerCollisionBack = display.newRect(sceneGroup, pernas.x - 30, pernas.y - 15, 2, 70);
+	playerCollisionBack.anchorX = 0
+	playerCollisionBack.anchorY = 1
+	playerCollisionBack.alpha = 0
 
 	fisica.addBody(playerCollisionFront, "kinematic")
 	playerCollisionFront.name = "playerCollisionFront"
 	playerCollisionFront.isFixedRotation = true;
 
+	fisica.addBody(playerCollisionBack, "kinematic")
+	playerCollisionBack.name = "playerCollisionBack"
+	playerCollisionBack.isFixedRotation = true;
+
 
 	Runtime:addEventListener("tap", atirar)
-
 end
 
 -- Variáveis das funções
@@ -170,7 +147,8 @@ local noChao = true;
 local escorregando = false;
 
 function mudaPosicaoCollision()
-	playerCollisionFront.y = pernas.y - 15;
+	playerCollisionFront.y = pernas.y;
+	playerCollisionBack.y = pernas.y;
 end
 
 timer.performWithDelay(1, mudaPosicaoCollision, 0)
@@ -198,6 +176,19 @@ function corre()
 	-- else
 	-- 	print("pulo-escorrega")
 	-- end
+end
+
+local function removeParticula(obj)
+	display.remove(obj)
+	obj = nil
+end
+
+function particula()
+	local tiroBasic = display.newEmitter(tiroBasicData)
+	tiroBasic.x = bracos.x - 30
+	tiroBasic.y = bracos.y
+	tiroBasic.trans = transition.to(tiroBasic, { time = 3000, x = display.contentWidth + 10,
+									transition = easing.linear, onComplete = removeParticula })
 end
 
 function pula()

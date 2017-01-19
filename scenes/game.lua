@@ -9,7 +9,7 @@ local player
 
 local fisica = require("physics");
 fisica.start(true);
-fisica.setDrawMode("hybrid");
+-- fisica.setDrawMode("hybrid");
 
 local function endGame()
     composer.gotoScene( "scenes.menu", { time=800, effect="crossFade" } )
