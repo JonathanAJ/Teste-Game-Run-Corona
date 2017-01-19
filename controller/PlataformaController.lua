@@ -5,14 +5,6 @@ local larguraTela = display.contentWidth;
 
 local Plataforma = {}
 
-local confPlataformSheet = {
-	width = 64,
-	height = 64,
-	numFrames = 48
-}
-
-local plataformaTilesSheet = graphics.newImageSheet("assets/tiles.png", confPlataformSheet)
-
 local gpPlataforma = display.newGroup()
 gpPlataforma.name = "plataforma"
 
@@ -33,32 +25,6 @@ function Plataforma.load(sceneGroup)
 	chao:setFillColor(0, 0, 0, 0)
 	fisica.addBody(chao, "static", {bounce = 0});
 
-	-- criaObstaculos()
-end
-
-function criaObstaculos()
-
-	for i = 0, 3 do
-
-		local obstaculo = display.newImage(gpObstaculos, plataformaTilesSheet, 2)
-		
-		obstaculo.anchorX = 0
-		obstaculo.anchorY = 1
-
-		obstaculo.x = (i * (64 * 5)) + larguraTela
-		
-		if math.random(2) == 1 then
-			-- vem de baixo
-			obstaculo.y = alturaTela - (obstaculo.contentHeight)
-		else
-			-- vem de cima
-			obstaculo.y = alturaTela - (obstaculo.contentHeight * 2)
-		end
-
-		fisica.addBody(obstaculo, "dynamic")
-		obstaculo.isFixedRotation = true;
-		obstaculo.gravityScale = 0
-	end
 end
 
 function update()
