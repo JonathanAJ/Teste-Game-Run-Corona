@@ -185,10 +185,12 @@ end
 
 function particula()
 	local tiroBasic = display.newEmitter(tiroBasicData)
-	tiroBasic.x = bracos.x - 30
+
+	tiroBasic.x = bracos.x + 25
 	tiroBasic.y = bracos.y
 	tiroBasic.trans = transition.to(tiroBasic, { time = 3000, x = display.contentWidth + 10,
 									transition = easing.linear, onComplete = removeParticula })
+	fisica.addBody(tiroBasic, "kinematic", {shape = { 70, 15, 70, -10, 10, 0 }});
 end
 
 function pula()
