@@ -188,9 +188,10 @@ function particula()
 
 	tiroBasic.x = bracos.x + 25
 	tiroBasic.y = bracos.y
+	fisica.addBody(tiroBasic, "kinematic", {shape = { 70, 15, 70, -10, 10, 0 }});
+	tiroBasic.name = "tiroBasic"
 	tiroBasic.trans = transition.to(tiroBasic, { time = 3000, x = display.contentWidth + 10,
 									transition = easing.linear, onComplete = removeParticula })
-	fisica.addBody(tiroBasic, "kinematic", {shape = { 70, 15, 70, -10, 10, 0 }});
 end
 
 function pula()
