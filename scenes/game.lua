@@ -6,10 +6,11 @@ local scene = composer.newScene()
 
 local background
 local player
+local inimigo
 
 local fisica = require("physics");
 fisica.start(true);
-fisica.setDrawMode("hybrid");
+-- fisica.setDrawMode("hybrid");
 
 local function endGame()
     composer.gotoScene( "scenes.menu", { time=800, effect="crossFade" } )
@@ -35,6 +36,9 @@ function scene:create( event )
 
     player = require("controller.PlayerController");
     player.load(sceneGroup);
+
+    inimigo = require "controller.InimigoController"
+    inimigo.load(sceneGroup);
 	
     local returnButton = display.newText(sceneGroup, "Menu", display.contentWidth - 50, 25, "3Dventure.ttf", 32)
     returnButton:setFillColor( 0, 0, 0)

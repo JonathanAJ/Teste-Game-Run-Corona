@@ -50,13 +50,14 @@ local options =
         }
     }
 }
+
 local spritesPersonagem = graphics.newImageSheet( "assets/spritesheet.png", options )
 
 local animacaoPersonagem = {
     {
         name = "correndo",
         frames = { 4, 5, 6},
-        time = 400,
+        time = 200,
         loopCount = 0
     }
 }
@@ -72,7 +73,7 @@ local function atirar(event)
 
 	if(event.x > display.contentCenterX) then
 		print("atirou");
-		torax:applyForce( 8, 0, torax.x, torax.y )
+		torax:applyForce( -8, 0, torax.x, torax.y )
 		particula()
 	end
 
@@ -86,19 +87,22 @@ function Player.load(sceneGroup)
 
 	pernas.x = 130
 	pernas.y = display.contentCenterY
-	pernas.name = "pernas"
+	pernas.myName = "pernas"
 
 	torax = display.newImage(sceneGroup, spritesPersonagem, 3)
 	torax.x = 130
 	torax.y = display.contentCenterY - 13
+	torax.myName = "torax"
 
 	bracos = display.newImage(sceneGroup, spritesPersonagem, 2)
 	bracos.x = 135
 	bracos.y = display.contentCenterY - 15
+	bracos.myName = "bracos"
 
 	cabeca = display.newImage(sceneGroup, spritesPersonagem, 1)
 	cabeca.x = 130
 	cabeca.y = display.contentCenterY - 40
+	cabeca.myName = "cabeca"
 
 	fisica.addBody(pernas, "dynamic", {bounce = 0.5});
 	fisica.addBody(torax, "dynamic",  {bounce = 0.5});
@@ -119,7 +123,7 @@ function Player.load(sceneGroup)
 	joint3.isLimitEnabled = true
 	joint3:setLimits( -20, -2 )
 
-	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y, 2, 70);
+	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y, 2, 30);
 	playerCollisionFront.anchorX = 0
 	playerCollisionFront.anchorY = 1
 	playerCollisionFront.alpha = 0
@@ -130,11 +134,11 @@ function Player.load(sceneGroup)
 	playerCollisionBack.alpha = 0
 
 	fisica.addBody(playerCollisionFront, "kinematic")
-	playerCollisionFront.name = "playerCollisionFront"
+	playerCollisionFront.myName = "playerCollisionFront"
 	playerCollisionFront.isFixedRotation = true;
 
 	fisica.addBody(playerCollisionBack, "kinematic")
-	playerCollisionBack.name = "playerCollisionBack"
+	playerCollisionBack.myName = "playerCollisionBack"
 	playerCollisionBack.isFixedRotation = true;
 
 
@@ -147,8 +151,8 @@ local noChao = true;
 local escorregando = false;
 
 function mudaPosicaoCollision()
-	playerCollisionFront.y = pernas.y;
-	playerCollisionBack.y = pernas.y;
+	playerCollisionFront.y = pernas.y + 15;
+	playerCollisionBack.y = pernas.y + 15;
 end
 
 timer.performWithDelay(1, mudaPosicaoCollision, 0)
@@ -186,10 +190,10 @@ end
 function particula()
 	local tiroBasic = display.newEmitter(tiroBasicData)
 
-	tiroBasic.x = bracos.x + 25
+	tiroBasic.x = bracos.x - 25
 	tiroBasic.y = bracos.y
-	fisica.addBody(tiroBasic, "kinematic", {shape = { 70, 15, 70, -10, 10, 0 }});
-	tiroBasic.name = "tiroBasic"
+	fisica.addBody(tiroBasic, "kinematic", {shape = { 65, 5, 65, -5, 50, 0 }});
+	tiroBasic.myName = "tiroBasic"
 	tiroBasic.trans = transition.to(tiroBasic, { time = 3000, x = display.contentWidth + 10,
 									transition = easing.linear, onComplete = removeParticula })
 end
@@ -205,7 +209,7 @@ function pula()
 
 		pernas:applyForce( 0, -8, pernas.x, pernas.y )
 		torax:applyForce( 0, -4, torax.x, torax.y )
-		cabeca:applyForce( 0, -2, cabeca.x, cabeca.y )
+		-- cabeca:applyForce( 0, -2, cabeca.x, cabeca.y )
 
 		timer.performWithDelay(450, quedaPlayer, 1);
 		print("pula!")
@@ -264,8 +268,8 @@ Runtime:addEventListener("touch", swipe)
 
 function colisaoPlataforma(event)
 	if(event.phase == "began") then
-        if(event.object1.parent.name == "plataforma" and
-		   event.object2.name == "pernas" and noChao == false) then
+        if(event.object1.myName == "plataforma" and
+		   event.object2.myName == "pernas" and noChao == false) then
 
 			noChao = true;
 		    		
@@ -280,17 +284,6 @@ end
 
 Runtime:addEventListener("collision", colisaoPlataforma);
 
-function colisaoObstaculo(event)
-	if(event.phase == "began") then
-        if(event.object1.parent.name == "obstaculo" and
-		   event.object2.name == "playerCollisionFront") then
-			print("colidiu com obstaculo")
-		end
-	end
-end
-
-Runtime:addEventListener("collision", colisaoObstaculo);
-
 function changeSizeColission(size)
 	fisica.removeBody(playerCollisionFront)
 	playerCollisionFront.height = size
@@ -298,7 +291,8 @@ function changeSizeColission(size)
 end
 
 function Player.removeListeners()
-	Runtime:removeEventListener( "tap", atirar )
+	Runtime:removeEventListener("tap", atirar )
+	Runtime:removeEventListener("touch", swipe)
 end
 
 return Player;
