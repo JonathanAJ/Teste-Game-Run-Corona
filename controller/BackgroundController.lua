@@ -1,3 +1,6 @@
+display.setStatusBar( display.HiddenStatusBar )
+math.randomseed(os.time())
+
 local Background = {}
 
 local tableParallax = {}
@@ -70,11 +73,7 @@ function Background.load(sceneGroup)
 	table.insert(tableParallax, ground1)
 	table.insert(tableParallax, ground2)
 
-	print("NumTable "..table.maxn(tableParallax))
-
 	for i = 1, #tableParallax, 2 do
-
-		print("index"..i)
 
 		local image1 = tableParallax[i]
 		local image2 = tableParallax[i+1]
@@ -142,8 +141,6 @@ function Background.stop()
 	for i = #tableParallax, 1,-1 do
 	    table.remove(tableParallax, i)
 	end
-
-	print("NumTableEmpty "..table.maxn(tableParallax))
 
 	Runtime:removeEventListener("enterFrame", move)
 end

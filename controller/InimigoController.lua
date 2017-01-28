@@ -1,11 +1,16 @@
-local fisica = require("physics")
+display.setStatusBar( display.HiddenStatusBar )
+math.randomseed(os.time())
 
-local alturaTela = display.contentHeight
-local larguraTela = display.contentWidth
+local fisica = require("physics")
 
 local Inimigo = {}
 
 function Inimigo.load(sceneGroup)
+
+	flagColisaoCabeca = false
+	flagColisaoTorax = false
+	flagColisaoBracos = false
+	flagColisaoPernas = false
 
 	options = {
 	    width = 125,
@@ -23,18 +28,33 @@ function Inimigo.load(sceneGroup)
 	        loopCount = 0
 	    }
 	}
-	initPtero(sceneGroup, 3000, 300)
-	initPtero(sceneGroup, 6000, 300)
-	initPtero(sceneGroup, 9000, 300)
+
+	updatePtero(sceneGroup)
 end
 
-function initPtero(sceneGroup, time, distance)
-	local ptero = display.newSprite(sceneGroup, spritesPersonagem, animacaoPersonagem )
+function updatePtero(sceneGroup)
+	timerPtero = timer.performWithDelay(1500, initPtero, 0)
+	timerPtero.params = { myParamScene = sceneGroup}
+end
+
+function Inimigo.pauseTimer()
+	timer.pause(timerPtero)
+end
+
+function initPtero(event)
+
+	local params = event.source.params
+
+	local ptero = display.newSprite(params.myParamScene, spritesPersonagem, animacaoPersonagem )
 	ptero.myName = "inimigoPtero"
 	ptero:setSequence("voando")
 	ptero:play()
 
-	ptero.x = display.contentWidth + distance
+	local randomDistance = math.random(200, 2000)
+
+	local randomTime = randomDistance * 10
+
+	ptero.x = display.contentWidth + randomDistance
 	ptero.y = display.contentCenterY + 50
 
 	fisica.addBody(ptero, "dynamic", {chain = {-64, -5, 22, -64, 64, 0, 22, 64, -20, 38, -20, -5},
@@ -45,29 +65,54 @@ function initPtero(sceneGroup, time, distance)
 	ptero.collision = colisao
 	ptero:addEventListener( "collision" )
 
-	transition.to( ptero, { time = time, x = -250, onComplete = clear })
+	transition.to( ptero, { time = randomTime, x = -250, onComplete = clear })
 end
 
 function colisao( self, event )
  	if ( event.phase == "began" ) then
- 		if(event.other.myName == "tiroBasic") then
- 			print("acertou o tiro > MORREU")
+ 		if (event.other.myName == "tiroBasic") then
+ 			print("matou")
  			clear(event.other)
- 			self.bodyType = "kinematic"
  			transition.to( self, { time = 200, alpha = 0, rotation = 180, x = display.contentWidth, onComplete = clear })
- 		elseif(event.other.myName == "cabeca") then
- 			print("GAME OVER")
- 			event.other.bodyType = "kinematic"
- 			self.bodyType = "kinematic"
- 			transition.to( event.other, { time = 500, rotation = 180, onComplete = clear })
- 			transition.to( self, { time = 200, alpha = 0, rotation = 180, x = display.contentWidth, onComplete = clear })
+ 		elseif (event.other.myName == "cabeca" and flagColisaoCabeca == false) then
+			trueFlags()
+			finish(self, event)
+		elseif (event.other.myName == "bracos" and flagColisaoBracos == false) then
+			trueFlags()
+			finish(self, event)
+		elseif (event.other.myName == "pernas" and flagColisaoPernas == false) then
+			trueFlags()
+			finish(self, event)
+		elseif (event.other.myName == "torax" and flagColisaoTorax == false) then
+			trueFlags()
+			finish(self, event)
  		end
     end
+end
+
+function trueFlags()
+	flagColisaoCabeca = true
+	flagColisaoBracos = true
+	flagColisaoPernas = true
+	flagColisaoTorax = true
+end
+
+function finish(self, event)
+	print("GAME OVER"..event.other.myName)
+	transition.to( event.other, { time = 500, rotation = 180, onComplete = clear })
+	transition.to( self, { time = 200, alpha = 0, rotation = 180, x = display.contentWidth, onComplete = gameOver })
 end
 
 function clear(object)
 	display.remove(object)
 	object = nil
+end
+
+function gameOver(object)
+	display.remove(object)
+	object = nil
+	local composer = require("composer")
+	composer.gotoScene( "scenes.menu", { time = 200, effect = "crossFade" } )
 end
 
 return Inimigo
