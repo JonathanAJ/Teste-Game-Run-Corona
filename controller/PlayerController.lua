@@ -65,6 +65,8 @@ local animacaoPersonagem = {
     }
 }
 
+local timerIdPula
+
 function Player.load(sceneGroup)
 
 	fisica.setGravity( 0, 30 )
@@ -183,7 +185,7 @@ function pula()
     	pernas:pause()
 		pernas:applyForce( 0, -25, pernas.x, pernas.y )
 		print("pula!")
-		timer.performWithDelay(500, playCorre, 1)
+		timerIdPula = timer.performWithDelay(500, playCorre, 1)
 	end
 end
 
@@ -209,8 +211,9 @@ function Player.removeListeners()
 end
 
 function Player.pauseTimer()
-	pernas:pause()
 	timer.pause(timerIdPosicao)
+	timer.pause(timerIdPula)
+	pernas:pause()
 end
 
 return Player;

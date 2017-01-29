@@ -20,14 +20,6 @@ function scene:show( event )
 		local parent = event.parent  --reference to the parent scene object
 	    parent:resumeGame()
 
-        local bgModalAlpha = display.newRect(sceneGroup,
-                                             display.contentCenterX,
-                                             display.contentCenterY,
-                                             display.contentWidth,
-                                             display.contentHeight)
-        bgModalAlpha:setFillColor(0,0,0)
-        bgModalAlpha.alpha = 0.75
-
         local modal = display.newRoundedRect(sceneGroup,
                                              display.contentCenterX,
                                              display.contentCenterY,
@@ -76,6 +68,7 @@ function goReload(event)
     
     -- composer.removeScene("scenes.game")
     -- composer.gotoScene( "scenes.game", "fade", 200 )
+    composer.gotoScene( "scenes.preGame", "fade", 200 )
 end
 
 function goMenu(event)

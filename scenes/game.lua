@@ -54,12 +54,11 @@ function scene:hide( event )
         inimigo.pauseTimer()
         player.pauseTimer()
         fisica.stop(true)
+        composer.removeScene("scenes.game")
 
     elseif ( phase == "did" ) then
         print("enter hide did game")
         -- Code here runs immediately after the scene goes entirely off screen
-        --Runtime:removeEventListener( "collision", onCollision )
-        composer.removeScene("scenes.game")
     end
 end
 
@@ -71,11 +70,11 @@ function scene:destroy( event )
 end
 
 function scene:resumeGame()
+    fisica.pause()
     background.stop()
-    -- player.removeListeners()
+    player.removeListeners()
     inimigo.pauseTimer()
     player.pauseTimer()
-    -- fisica.pause()
 end
 
 scene:addEventListener( "create", scene )

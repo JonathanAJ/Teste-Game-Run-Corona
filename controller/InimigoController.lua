@@ -5,7 +5,10 @@ local fisica = require("physics")
 
 local Inimigo = {}
 
+local sceneGroupLocal
+
 function Inimigo.load(sceneGroup)
+	sceneGroupLocal = sceneGroup
 
 	flagColisaoCabeca = false
 	flagColisaoTorax = false
@@ -75,7 +78,7 @@ function colisao( self, event )
  		if (event.other.myName == "tiroBasic") then
  			print("matou")
  			clear(event.other)
- 			transition.to( self, { time = 200, alpha = 0, rotation = 180, x = display.contentWidth, onComplete = clear })
+ 			transition.to( self, { time = 700, rotation = 180, x = display.contentWidth, onComplete = clear })
  		elseif (event.other.myName == "cabeca" and flagColisaoCabeca == false) then
 			trueFlags()
 			finish(self, event)
@@ -100,9 +103,9 @@ function trueFlags()
 end
 
 function finish(self, event)
-	print("GAME OVER"..event.other.myName)
-	transition.to( event.other, { time = 500, rotation = -180, onComplete = clear })
-	transition.to( self, { time = 200, alpha = 0, rotation = 180, x = display.contentWidth, onComplete = gameOver })
+	print("GAME OVER "..event.other.myName)
+	transition.to( event.other, { time = 200, rotation = math.random(-270, -90)})
+	transition.to( self, { time = 800, rotation = 180, x = display.contentWidth, onComplete = gameOver })
 end
 
 function clear(object)
@@ -111,8 +114,9 @@ function clear(object)
 end
 
 function gameOver(object)
-	display.remove(object)
-	object = nil
+    local background = require("controller.BackgroundController")
+    background.modalAlpha(sceneGroupLocal)
+
 	local composer = require("composer")
 	local options = {
 	    effect = "fromTop",
