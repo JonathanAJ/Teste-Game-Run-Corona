@@ -30,7 +30,7 @@ function scene:create( event )
     local background = require("controller.BackgroundCreditosController");
     background.load(sceneGroup);
 
-    local cred = display.newText( sceneGroup, "Creditos", display.contentCenterX, 55, "3Dventure.ttf", 40 )
+    local cred = display.newText( sceneGroup, "ABOUT", display.contentCenterX, 55, "3Dventure.ttf", 40 )
     cred:setFillColor( 0, 0, 0 )
 
     local caia = display.newImageRect( sceneGroup, "assets/char/caia.png", 65, 70 )

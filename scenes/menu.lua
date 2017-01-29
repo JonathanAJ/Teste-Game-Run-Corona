@@ -82,10 +82,10 @@ function initHUD(sceneGroup)
     logoName.x = display.contentCenterX
     logoName.y = display.contentCenterY-50
 
-    local playButton = display.newText( sceneGroup, "Jogar", display.contentCenterX, 250, "3Dventure.ttf", 40 )
+    local playButton = display.newText( sceneGroup, "PLAY", display.contentCenterX, 250, "3Dventure.ttf", 40 )
     playButton:setFillColor( 1, 1, 1 )
 
-    local creditosButton = display.newText( sceneGroup, "Creditos", display.contentCenterX, 300, "3Dventure.ttf", 40 )
+    local creditosButton = display.newText( sceneGroup, "ABOUT", display.contentCenterX, 300, "3Dventure.ttf", 40 )
     creditosButton:setFillColor( 1, 1, 1 )
 
     playButton:addEventListener( "tap", gotoCutscene )

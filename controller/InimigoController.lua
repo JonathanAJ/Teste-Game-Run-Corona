@@ -34,18 +34,20 @@ end
 
 function updatePtero(sceneGroup)
 	timerPtero = timer.performWithDelay(1500, initPtero, 0)
+	-- timerPtero = timer.performWithDelay(10, initPtero, 0)
 	timerPtero.params = { myParamScene = sceneGroup}
 end
 
 function Inimigo.pauseTimer()
 	timer.pause(timerPtero)
+	transition.pause()
 end
 
 function initPtero(event)
 
 	local params = event.source.params
 
-	local ptero = display.newSprite(params.myParamScene, spritesPersonagem, animacaoPersonagem )
+	ptero = display.newSprite(params.myParamScene, spritesPersonagem, animacaoPersonagem )
 	ptero.myName = "inimigoPtero"
 	ptero:setSequence("voando")
 	ptero:play()
@@ -99,7 +101,7 @@ end
 
 function finish(self, event)
 	print("GAME OVER"..event.other.myName)
-	transition.to( event.other, { time = 500, rotation = 180, onComplete = clear })
+	transition.to( event.other, { time = 500, rotation = -180, onComplete = clear })
 	transition.to( self, { time = 200, alpha = 0, rotation = 180, x = display.contentWidth, onComplete = gameOver })
 end
 
@@ -112,7 +114,12 @@ function gameOver(object)
 	display.remove(object)
 	object = nil
 	local composer = require("composer")
-	composer.gotoScene( "scenes.menu", { time = 200, effect = "crossFade" } )
+	local options = {
+	    effect = "fromTop",
+	    time = 500,
+	    isModal = true
+	}
+	composer.showOverlay( "scenes.modalRetorno", options )
 end
 
 return Inimigo

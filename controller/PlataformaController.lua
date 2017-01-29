@@ -14,7 +14,7 @@ function Plataforma.load(sceneGroup)
 	chao.x = 0
 	chao.y = alturaTela
 	chao:setFillColor(0, 0, 0, 0)
-	fisica.addBody(chao, "static", {bounce = 0});
+	fisica.addBody(chao, "static", { bounce=0.0, friction=0.3 });
 
 end
 

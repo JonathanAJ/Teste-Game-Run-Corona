@@ -67,51 +67,55 @@ local animacaoPersonagem = {
 
 function Player.load(sceneGroup)
 
-	sceneGroupGlobal = sceneGroup
+	fisica.setGravity( 0, 30 )
 
-	noChao = true;
+	sceneGroupGlobal = sceneGroup
 
 	pernas = display.newSprite(sceneGroup, spritesPersonagem, animacaoPersonagem)
 	pernas:setSequence( "correndo" )
 	pernas:play()
 
 	pernas.x = 130
-	pernas.y = display.contentCenterY
+	pernas.y = alturaTela - 50
 	pernas.myName = "pernas"
+	pernas.canJump = 0
 
 	torax = display.newImage(sceneGroup, spritesPersonagem, 3)
 	torax.x = 130
-	torax.y = display.contentCenterY - 13
+	torax.y = alturaTela - 70
 	torax.myName = "torax"
 
 	bracos = display.newImage(sceneGroup, spritesPersonagem, 2)
 	bracos.x = 135
-	bracos.y = display.contentCenterY - 15
+	bracos.y = alturaTela - 70
 	bracos.myName = "bracos"
 
 	cabeca = display.newImage(sceneGroup, spritesPersonagem, 1)
 	cabeca.x = 130
-	cabeca.y = display.contentCenterY - 40
+	cabeca.y = alturaTela - 95
 	cabeca.myName = "cabeca"
 
-	fisica.addBody(pernas, "dynamic", {bounce = 0.5});
-	fisica.addBody(torax, "dynamic",  {bounce = 0.5});
-	fisica.addBody(bracos, "dynamic", {bounce = 0.75});
-	fisica.addBody(cabeca, "dynamic", {bounce = 0.5});
+	fisica.addBody(pernas, "dynamic");
+	fisica.addBody(torax, "dynamic");
+	fisica.addBody(bracos, "dynamic");
+	fisica.addBody(cabeca, "dynamic");
 	pernas.isFixedRotation = true;
+	torax.isFixedRotation = true;
+	bracos.isFixedRotation = true;
+	cabeca.isFixedRotation = true;
 
-	joint = fisica.newJoint("piston", pernas, torax, pernas.x, pernas.y, 0, -1)
-	joint2 = fisica.newJoint("piston", torax, bracos, torax.x, torax.y, 0, -1)
-	joint3 = fisica.newJoint("piston", torax, cabeca, torax.x, torax.y, 0, -1)
+	joint = fisica.newJoint("piston", pernas, torax, pernas.x, pernas.y, 0, 1)
+	joint2 = fisica.newJoint("piston", torax, bracos, torax.x, torax.y, 0, 1)
+	joint3 = fisica.newJoint("piston", torax, cabeca, torax.x, torax.y, 0, 1)
 
 	joint.isLimitEnabled = true
-	joint:setLimits( -10, 5 )
+	joint:setLimits( -1, 3 )
 
 	joint2.isLimitEnabled = true
-	joint2:setLimits( 0, 0 )
+	joint2:setLimits( -1, 1 )
 
 	joint3.isLimitEnabled = true
-	joint3:setLimits( -20, -2 )
+	joint3:setLimits( -1, 0 )
 
 	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y, 2, 30);
 	playerCollisionFront.anchorX = 0
@@ -133,14 +137,15 @@ function Player.load(sceneGroup)
 
 	-- EventListeners
 	Runtime:addEventListener("tap", atirar)
-	Runtime:addEventListener("touch", swipe)
-	Runtime:addEventListener("collision", colisaoPlataforma)
+	pernas.collision = colisaoPlataforma
+	pernas:addEventListener("collision")
 
 	timerIdPosicao = timer.performWithDelay(1, mudaPosicaoCollision, 0)
-end
 
-function Player.pauseTimer()
-	timer.pause(timerIdPosicao)
+	local btPula = display.newCircle(sceneGroup, 50, alturaTela-25, 40)
+	btPula:setFillColor(0,0,0)
+	btPula.alpha = 0.6
+	btPula:addEventListener("tap", pula)
 end
 
 function atirar(event)
@@ -154,12 +159,6 @@ end
 function mudaPosicaoCollision()
 	playerCollisionFront.y = pernas.y + 15;
 	playerCollisionBack.y = pernas.y + 15;
-end
-
-function quedaPlayer()
-	-- if(pernas ~= nil) then
-	-- 	pernas:applyForce( 0, 12, pernas.x, pernas.y )
-	-- end
 end
 
 function removeParticula(obj)
@@ -180,69 +179,38 @@ function particula()
 end
 
 function pula()
-	if(noChao == true and
-		pernas.y <= alturaTela - 30) then
-
-		noChao = false;
-    	
+	if(pernas.canJump > 0) then
     	pernas:pause()
-
-		pernas:applyForce( 0, -8, pernas.x, pernas.y )
-		torax:applyForce( 0, -4, torax.x, torax.y )
-		-- cabeca:applyForce( 0, -2, cabeca.x, cabeca.y )
-
-		timerIdQueda = timer.performWithDelay(450, quedaPlayer, 1);
+		pernas:applyForce( 0, -25, pernas.x, pernas.y )
 		print("pula!")
+		timer.performWithDelay(500, playCorre, 1)
 	end
 end
 
--- Um décimo da tela
-local medicaoReferencia = alturaTela * 0.1;
-local yInicio, yFim, yRazao = 0;
-local xSwipe = 0;
-
-function swipe(event)
-
-    if ( event.phase == "began" ) then
-        
-		yInicio = event.y
-		xSwipe = event.x
-        
-    elseif ( event.phase == "moved" and xSwipe < display.contentCenterX ) then
-
-        yFim = event.y
-        yRazao = yInicio - yFim;
-
-        if (math.abs(yRazao) > medicaoReferencia) then
-	        if (yRazao > 0) then
-	        	pula()
-	        end
-	    end
-    end
-
-    return true
+function playCorre()
+	pernas:setSequence( "correndo" )
+    pernas:play()
 end
 
-function colisaoPlataforma(event)
-	if(event.phase == "began") then
-        if(event.object1.myName == "plataforma" and
-		   event.object2.myName == "pernas" and noChao == false) then
-
-			noChao = true;
-		    		
-			pernas:setSequence( "correndo" )
-		    pernas:play()
-    
-			print("encosta")
-		end
-	end
-
+function colisaoPlataforma(self, event)
+	if(event.other.myName == "plataforma" ) then
+      if (event.phase == "began" ) then
+       	self.canJump = self.canJump+1
+      elseif (event.phase == "ended" ) then
+        self.canJump = self.canJump-1
+		print("encosta")
+      end
+   end
 end
 
 function Player.removeListeners()
 	Runtime:removeEventListener("tap", atirar )
-	Runtime:removeEventListener("touch", swipe)
-	Runtime:removeEventListener("collision", colisaoPlataforma);
+	pernas:removeEventListener("collision");
+end
+
+function Player.pauseTimer()
+	pernas:pause()
+	timer.pause(timerIdPosicao)
 end
 
 return Player;

@@ -8,25 +8,19 @@ local fisica = require("physics");
 fisica.start(true);
 fisica.setDrawMode("hybrid");
 
-local function endGame()
-    composer.gotoScene( "scenes.menu", { time = 800, effect = "crossFade" } )
-end
-
-local function gotoMenu(event)
-    event.target:setFillColor( 0, 0, 0)
-    composer.gotoScene( "scenes.menu", { time = 200, effect = "crossFade" } )
-end
-
 function scene:create( event )
 
     print("enter create game")
 
     local sceneGroup = self.view
 
-    background = require("controller.BackgroundController");
-    plataforma = require("controller.PlataformaController");
-    player = require("controller.PlayerController");
-    inimigo = require "controller.InimigoController"
+    background = require("controller.BackgroundController")
+    plataforma = require("controller.PlataformaController")
+    player = require("controller.PlayerController")
+    inimigo = require("controller.InimigoController")
+    background.load(sceneGroup)
+    background.start()
+    plataforma.load(sceneGroup)
 end
 
 function scene:show( event )
@@ -36,14 +30,12 @@ function scene:show( event )
 
     -- Code here runs when the scene is still off screen (but is about to come on screen)
     if ( phase == "will" ) then
-        background.load(sceneGroup)
-        background.start()
-        plataforma.load(sceneGroup)
+        print("enter show will game")
         player.load(sceneGroup)
         inimigo.load(sceneGroup)
-        initHUD(sceneGroup)
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
+        print("enter show did game")
 
     end
 end
@@ -55,6 +47,7 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
+        print("enter hide will game")
         
         background.stop()
         player.removeListeners()
@@ -63,6 +56,7 @@ function scene:hide( event )
         fisica.stop(true)
 
     elseif ( phase == "did" ) then
+        print("enter hide did game")
         -- Code here runs immediately after the scene goes entirely off screen
         --Runtime:removeEventListener( "collision", onCollision )
         composer.removeScene("scenes.game")
@@ -76,10 +70,12 @@ function scene:destroy( event )
 
 end
 
-function initHUD(sceneGroup)
-    local returnButton = display.newText(sceneGroup, "Menu", display.contentWidth - 50, 25, "3Dventure.ttf", 32)
-    returnButton:setFillColor( 1, 1, 1)
-    returnButton:addEventListener( "tap", gotoMenu )
+function scene:resumeGame()
+    background.stop()
+    -- player.removeListeners()
+    inimigo.pauseTimer()
+    player.pauseTimer()
+    -- fisica.pause()
 end
 
 scene:addEventListener( "create", scene )
