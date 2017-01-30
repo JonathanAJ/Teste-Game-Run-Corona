@@ -17,7 +17,7 @@ local function gotoMenu()
 	composer.gotoScene( "scenes.menu", "slideLeft", 200 )
 end
 
-local myText2 = [[Não sabemos em que época você foi parar devido as condições da maquina do tempo, esperamos que você consiga cumprir a missão, agora você é a nossa única esperança, por favor Dr. Luter, Run N' Gun por sua vida.]]
+local myText2 = [[We do not know what period of time you were sent due to the conditions of the time machine, we hope you can fulfill the mission, now you are our only hope, please Dr. Luter, Run N 'Gun for your life.]]
 
 local optionsText = {
    text = myText2,

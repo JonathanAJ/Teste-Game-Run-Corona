@@ -19,7 +19,7 @@ local function gotoCutscene2()
 	composer.gotoScene( "scenes.cutscene2", "slideLeft", 200 )
 end
 
-local myText = [[Olá, se está vendo essa mensagem, então nossos planos deram certo e você conseguiu viajar pelo tempo, agora o futuro está nas suas mãos, precisamos que você derrote o ditador do Império Temporal............]]
+local myText = [[Hello, if you are seeing this message, then our plans have worked well and you have been able to travel through time, now the future is in your hands, we need you to defeat the dictator of the Temporal Empire............]]
 
 local options = {
    text = myText,
