@@ -2,6 +2,11 @@ display.setStatusBar( display.HiddenStatusBar )
 math.randomseed(os.time())
 
 local fisica = require("physics")
+local composer = require("composer")
+
+-- Pega a cena atual
+local scene = composer.getScene( composer.getSceneName( "current" ) )
+local sounds = scene.sounds
 
 local Inimigo = {}
 
@@ -77,6 +82,7 @@ function colisao( self, event )
  	if ( event.phase == "began" ) then
  		if (event.other.myName == "tiroBasic") then
  			print("matou")
+			audio.play(sounds.enemie)
  			clear(event.other)
  			transition.to( self, { time = 700, rotation = 180, x = display.contentWidth, onComplete = clear })
  		elseif (event.other.myName == "cabeca" and flagColisaoCabeca == false) then
@@ -104,8 +110,9 @@ end
 
 function finish(self, event)
 	print("GAME OVER "..event.other.myName)
+	audio.play(sounds.hit)
 	transition.to( event.other, { time = 200, rotation = math.random(-270, -90)})
-	transition.to( self, { time = 800, rotation = 180, x = display.contentWidth, onComplete = gameOver })
+	transition.to( self, { time = 200, rotation = math.random(-270, -90), onComplete = gameOver })
 end
 
 function clear(object)
@@ -114,10 +121,11 @@ function clear(object)
 end
 
 function gameOver(object)
+	audio.play(sounds.gameover)
+
     local background = require("controller.BackgroundController")
     background.modalAlpha(sceneGroupLocal)
 
-	local composer = require("composer")
 	local options = {
 	    effect = "fromTop",
 	    time = 500,

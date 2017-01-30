@@ -6,14 +6,15 @@ local scene = composer.newScene()
 
 local fisica = require("physics");
 fisica.start(true);
-fisica.setDrawMode("hybrid");
 
 function scene:create( event )
 
     print("enter create game")
 
     local sceneGroup = self.view
-
+    
+    initSounds()
+    
     background = require("controller.BackgroundController")
     plataforma = require("controller.PlataformaController")
     player = require("controller.PlayerController")
@@ -32,7 +33,9 @@ function scene:show( event )
     if ( phase == "will" ) then
         print("enter show will game")
         player.load(sceneGroup)
-        inimigo.load(sceneGroup)
+        -- inimigo.load(sceneGroup)
+        audio.play(scene.sounds.gameSound, { loops = -1, channel = 1 })
+        audio.setVolume( 0.3, { channel = 1 } )
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
         print("enter show did game")
@@ -55,6 +58,7 @@ function scene:hide( event )
         player.pauseTimer()
         fisica.stop(true)
         composer.removeScene("scenes.game")
+        audio.stop()
 
     elseif ( phase == "did" ) then
         print("enter hide did game")
@@ -75,6 +79,17 @@ function scene:resumeGame()
     player.removeListeners()
     inimigo.pauseTimer()
     player.pauseTimer()
+end
+
+function initSounds()
+    scene.sounds = {
+        gameSound = audio.loadSound("audio/loop/game.ogg"),
+        hit = audio.loadSound("audio/game/hit.wav"),
+        jump = audio.loadSound("audio/game/jump.wav"),
+        gameover = audio.loadSound("audio/game/gameover.wav"),
+        enemie = audio.loadSound("audio/game/enemie.wav"),
+        fire = audio.loadSound("audio/game/fire.wav")
+    }
 end
 
 scene:addEventListener( "create", scene )

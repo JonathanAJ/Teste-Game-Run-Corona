@@ -5,10 +5,6 @@ local composer = require("composer")
 local scene = composer.newScene()
 composer.isDebug = true
 
-local fisica = require("physics");
-
-local soundEffect = audio.loadSound( "audio/chiptune-loop.wav" )
-
 local function gotoCutscene(event)
 	event.target:setFillColor( 0, 0, 0)
 	composer.gotoScene( "scenes.game", "fade", 300 )
@@ -16,18 +12,21 @@ end
 
 local function gotoCreditos(event)
 	event.target:setFillColor( 0, 0, 0)
-	composer.gotoScene( "scenes.creditos", "fade", 200 )
+	composer.gotoScene( "scenes.creditos", "fade", 300 )
 end
+
+local background
 
 function scene:create( event )
 
 	print("enter create menu")
 
     local sceneGroup = self.view
-    -- Code here runs when the scene is first created but has not yet appeared on screen
+
+    initSounds()
+
     background = require("controller.BackgroundController");
 end
-
 
 -- show()
 function scene:show( event )
@@ -39,16 +38,14 @@ function scene:show( event )
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
 	    background.load(sceneGroup)
         background.start()
-    	initHUD(sceneGroup)
-    	audio.play(soundEffect)
+    	audio.play(scene.sounds.sceneOpenSound, { loops = -1, channel = 2 })
 
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
-		
+    	initHUD(sceneGroup)
 
 	end
 end
-
 
 -- hide()
 function scene:hide( event )
@@ -77,19 +74,29 @@ function scene:destroy( event )
 
 end
 
+function initSounds()
+    scene.sounds = {
+        sceneOpenSound = audio.loadSound("audio/loop/open.ogg"),
+    }
+end
+
 function initHUD(sceneGroup)
-    local logoName = display.newImageRect( sceneGroup, "assets/logoname.png", 157, 106 )
+    local logoName = display.newImageRect( sceneGroup, "assets/logoname.png", 197, 146 )
     logoName.x = display.contentCenterX
     logoName.y = display.contentCenterY-50
 
-    local playButton = display.newText( sceneGroup, "PLAY", display.contentCenterX, 250, "3Dventure.ttf", 40 )
+    local playButton = display.newText( sceneGroup, "PLAY", display.contentCenterX, 250, fontTitle, 40 )
     playButton:setFillColor( 1, 1, 1 )
 
-    local creditosButton = display.newText( sceneGroup, "ABOUT", display.contentCenterX, 300, "3Dventure.ttf", 40 )
+    local creditosButton = display.newText( sceneGroup, "ABOUT", display.contentCenterX, 300, fontTitle, 40 )
     creditosButton:setFillColor( 1, 1, 1 )
 
     playButton:addEventListener( "tap", gotoCutscene )
     creditosButton:addEventListener( "tap", gotoCreditos )
+
+    transition.from( logoName, { xScale = 2.5, yScale = 2.5, time = 440, transition = easing.outQuad } )
+	transition.from( playButton, { y = altura, time = 440, transition = easing.outQuad } )
+	transition.from( creditosButton, { y = altura, time = 440, transition = easing.outQuad } )
 end
 
 -- -----------------------------------------------------------------------------------

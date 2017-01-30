@@ -26,19 +26,19 @@ function scene:show( event )
                                              300, 250, 7)
         local scoreTxt = display.newText(sceneGroup, "YOUR SCORE",
                                         display.contentCenterX,
-                                        display.contentCenterY - 90, "3Dventure.ttf", 40 )
+                                        display.contentCenterY - 90, fontTitle, 40 )
 
         local score = display.newText(sceneGroup, "11280",
                                         display.contentCenterX,
-                                        display.contentCenterY - 30, "3Dventure.ttf", 80 )
+                                        display.contentCenterY - 30, fontDialog, 80 )
 
         local retornaTxt = display.newText(sceneGroup, "RELOAD",
                                         display.contentCenterX - 65,
-                                        display.contentCenterY + 100, "3Dventure.ttf", 20 )
+                                        display.contentCenterY + 100, fontTitle, 20 )
 
         local menuTxt = display.newText(sceneGroup, "GO MENU",
                                     display.contentCenterX + 65,
-                                    display.contentCenterY + 100, "3Dventure.ttf", 20 )
+                                    display.contentCenterY + 100, fontTitle, 20 )
 
         local imgReload = display.newImageRect(sceneGroup, "assets/icons/ic_play.png", 72, 72)
         imgReload.x = display.contentCenterX - 70

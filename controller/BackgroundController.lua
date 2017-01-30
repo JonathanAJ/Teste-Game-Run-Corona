@@ -149,8 +149,8 @@ function Background.modalAlpha(scene)
         local bgModalAlpha = display.newRect(scene,
                                              display.contentCenterX,
                                              display.contentCenterY,
-                                             display.contentWidth,
-                                             display.contentHeight)
+                                             display.actualContentWidth,
+                                             display.actualContentHeight)
         bgModalAlpha:setFillColor(0,0,0)
         bgModalAlpha.alpha = 0.75
 end

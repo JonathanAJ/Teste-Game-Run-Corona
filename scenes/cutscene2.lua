@@ -14,24 +14,8 @@ local background;
 -- -----------------------------------------------------------------------------------
 
 local function gotoMenu()
-	composer.gotoScene( "scenes.menu", "slideLeft", 200 )
+	composer.gotoScene( "scenes.menu", "fade", 500 )
 end
-
-local myText2 = [[We do not know what period of time you were sent due to the conditions of the time machine, we hope you can fulfill the mission, now you are our only hope, please Dr. Luter, Run N 'Gun for your life.]]
-
-local optionsText = {
-   text = myText2,
-   x = display.contentCenterX,
-   y = display.contentCenterY,
-   width = 540,
-   height = 150,
-   font = "DTM-Sans",
-   fontSize = 25,
-   align = "center"
-}
-
-
-local history1 = display.newText( optionsText )
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -46,31 +30,7 @@ function scene:create( event )
     background2.load(sceneGroup);
     background2.start();
 
-    local dialog2 = display.newRoundedRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth-50 , display.contentHeight-80, 40 )
-    dialog2.strokeWidth = 2
-	dialog2:setFillColor( 1 )
-	dialog2:setStrokeColor( 0, 0, 0 )
-	dialog2.alpha = 0.75
-
-    local italo = display.newImageRect( sceneGroup, "assets/char/italo.png", 50, 60 )
-    italo.x = 65
-    italo.y = 75
-
-    local menber = display.newText( sceneGroup, "Italo:", 160, 75, "3Dventure.ttf", 40 )
-    menber:setFillColor( 0, 0.5, 1 )
-     
-	
-	history1:setFillColor( 0, 0, 0 )
-
-
-
-    local skip = display.newText( sceneGroup, ">>>", 575, 300, "3Dventure.ttf", 40 )
-    skip:setFillColor( 0, 0, 0 )
-    
-
-    skip:addEventListener( "touch", gotoMenu )
-    
-
+    initDialog(sceneGroup)
 end
 
 
@@ -85,8 +45,7 @@ function scene:show( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
-		
-
+		initText(sceneGroup)
 	end
 end
 
@@ -99,9 +58,8 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 		-- roda assim que a cena for ocultada	
-	    audio.stop()		
+	    audio.stop()
 		composer.removeScene("scenes.cutscene2")
-
 
 	elseif ( phase == "did" ) then
 		-- roda depois que a cena for ocultada
@@ -115,10 +73,47 @@ function scene:destroy( event )
 
 	local sceneGroup = self.view
 
-	history1:removeSelf()
-
 	print("enter destroy menu")
 
+end
+
+function initText(sceneGroup)
+	local myText2 = "We do not know what period of time you were sent due to the conditions of the time machine, we hope you can fulfill the mission, now you are our only hope, please Dr. Luter, Run N 'Gun for your life."
+
+	local optionsText = {
+	   parent = sceneGroup,
+	   text = myText2,
+	   x = display.contentCenterX,
+	   y = display.contentCenterY,
+	   width = 450,
+	   font = fontDialog,
+	   fontSize = 25,
+	   align = "justify"
+	}
+
+	local history = display.newText( optionsText )
+	history:setFillColor( 0, 0, 0 )
+
+  	transition.from( history, { y = altura, time = 540, transition = easing.outQuad } )
+end
+
+function initDialog(sceneGroup)
+	local dialog2 = display.newRoundedRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth-50 , display.contentHeight-80, 40 )
+    dialog2.strokeWidth = 2
+	dialog2:setFillColor( 1 )
+	dialog2:setStrokeColor( 0, 0, 0 )
+	dialog2.alpha = 0.75
+
+    local italo = display.newImageRect( sceneGroup, "assets/char/italo.png", 50, 60 )
+    italo.x = 65
+    italo.y = 75
+
+    local member = display.newText( sceneGroup, "Italo:", 160, 75, fontTitle, 40 )
+    member:setFillColor( 0, 0.5, 1 )
+
+    local skip = display.newText( sceneGroup, ">>>", 575, 300, fontTitle, 40 )
+    skip:setFillColor( 0, 0, 0 )
+    skip:addEventListener( "touch", gotoMenu )
 end
 
 

@@ -5,71 +5,22 @@ local composer = require( "composer" )
 
 local scene = composer.newScene()
 
--- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
--- -----------------------------------------------------------------------------------
-
-local function gotoMenu()
-    composer.gotoScene("scenes.menu")
+local function gotoMenu(event)
+    event.target:setFillColor( 1, 1, 1)
+    composer.gotoScene( "scenes.menu", "fade", 300 )
 end
 
--- Hide the status bar
-display.setStatusBar( display.HiddenStatusBar )
-
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
+local background
 
 -- create()
 function scene:create( event )
 
 	local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
+
+    initSounds()
     
-    local background = require("controller.BackgroundCreditosController");
-    background.load(sceneGroup);
-
-    local cred = display.newText( sceneGroup, "ABOUT", display.contentCenterX, 55, "3Dventure.ttf", 40 )
-    cred:setFillColor( 0, 0, 0 )
-
-    local caia = display.newImageRect( sceneGroup, "assets/char/caia.png", 65, 70 )
-    caia.x = 120
-    caia.y = 150
-
-    local menber1 = display.newText( sceneGroup, "Caia", 200, 150, "3Dventure.ttf", 40 )
-    menber1:setFillColor( 0, 0, 0 )
-
-    local ianna = display.newImageRect( sceneGroup, "assets/char/ianna.png", 50, 60 )
-    ianna.x = 120
-    ianna.y = 210
-
-    local menber2 = display.newText( sceneGroup, "Ianna", 210, 210, "3Dventure.ttf", 40 )
-    menber2:setFillColor( 0, 0, 0 )
-
-    local italo = display.newImageRect( sceneGroup, "assets/char/italo.png", 65, 70 )
-    italo.x = 370
-    italo.y = 150
-
-    local menber3 = display.newText( sceneGroup, "Italo", 470, 150, "3Dventure.ttf", 40 )
-    menber3:setFillColor( 0, 0, 0 )
-
-    local jon = display.newImageRect( sceneGroup, "assets/char/jon.png", 65, 70 )
-    jon.x = 370
-    jon.y = 210
-
-    local menber4 = display.newText( sceneGroup, "Jonathan", 500, 210, "3Dventure.ttf", 40 )
-    menber4:setFillColor( 0, 0, 0 )
-
-    local returnButton = display.newText( sceneGroup, "<<<", 200, 150, "3Dventure.ttf", 40 )
-    returnButton.x = 50
-    returnButton.y = 340
-
-    returnButton:addEventListener( "tap", gotoMenu )
-
-    local soundEffect = audio.loadSound( "audio/credits5.wav" )
-    -- audio.play( soundEffect )
-
+    background = require("controller.BackgroundCreditosController");
 end
 
 
@@ -81,9 +32,13 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
+        background.load(sceneGroup)
+        background.start()
+        audio.play(scene.sounds.sceneCreditSound, { loops = -1, channel = 3 })
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
+        initTextCred(sceneGroup)
         
     end
 end
@@ -97,11 +52,12 @@ function scene:hide( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is on screen (but is about to go off screen)
-        
+        audio.stop()        
+        background.stop()
 
     elseif ( phase == "did" ) then
-        -- Code here runs immediately after the scene goes entirely off screen
-       
+        -- Code here runs immediately after the scene goes entirely off screen  
+        composer.removeScene("scenes.creditos")
     end
 end
 
@@ -114,6 +70,87 @@ function scene:destroy( event )
 
 end
 
+function initSounds()
+    scene.sounds = {
+        sceneCreditSound = audio.loadSound("audio/loop/finalle.ogg"),
+    }
+end
+
+function initTextCred(sceneGroup)
+
+    local txt1 = 
+    {
+        parent = sceneGroup,
+        text = "Ianna Leal",     
+        x = 350,
+        y = 150,
+        width = 300,
+        font = fontDialog,
+        fontSize = 27,
+        align = "left"
+    }
+     local txt2 = 
+    {
+        parent = sceneGroup,
+        text = "Italo Oliveira",     
+        x = 350,
+        y = 220,
+        width = 300,
+        font = fontDialog,
+        fontSize = 27,
+        align = "left"
+    }
+     local txt3 = 
+    {
+        parent = sceneGroup,
+        text = "Jonathan Alves",     
+        x = 350,
+        y = 290,
+        width = 300,
+        font = fontDialog,
+        fontSize = 27,
+        align = "left"
+    }
+    
+    local cred = display.newText( sceneGroup, "ABOUT", display.contentCenterX, 55, fontTitle, 40 )
+    cred:setFillColor( 0, 0, 0 )
+
+    local ianna = display.newImageRect( sceneGroup, "assets/char/ianna.png", 50, 60 )
+    ianna.x = 150
+    ianna.y = 150
+
+    local iannatxt = display.newText(txt1)
+    iannatxt:setFillColor( 0, 0, 0 )
+
+    local italo = display.newImageRect( sceneGroup, "assets/char/italo.png", 65, 70 )
+    italo.x = 150
+    italo.y = 220
+
+    local italoTxt = display.newText(txt2)
+    italoTxt:setFillColor( 0, 0, 0 )
+
+    local jon = display.newImageRect( sceneGroup, "assets/char/jon.png", 65, 70 )
+    jon.x = 150
+    jon.y = 290
+
+    local jonTxt = display.newText(txt3)
+    jonTxt:setFillColor( 0, 0, 0 )
+
+    local returnButton = display.newText( sceneGroup, "<<<", 200, 150, fontTitle, 40 )
+    returnButton.x = 50
+    returnButton.y = 340
+
+    returnButton:addEventListener( "tap", gotoMenu )
+
+    transition.from( cred, { xScale = 2.5, yScale = 2.5, time = 440, transition = easing.outQuad } )
+    transition.from( ianna, { y = altura, time = 540, transition = easing.outQuad } )
+    transition.from( italo, { y = altura, time = 540, transition = easing.outQuad } )
+    transition.from( jon, { y = altura, time = 540, transition = easing.outQuad } )
+    transition.from( iannatxt, { y = altura, time = 540, transition = easing.outQuad } )
+    transition.from( italoTxt, { y = altura, time = 540, transition = easing.outQuad } )
+    transition.from( jonTxt, { y = altura, time = 540, transition = easing.outQuad } )
+    transition.from( returnButton, { x = largura, time = 540, transition = easing.outQuad } )
+end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners

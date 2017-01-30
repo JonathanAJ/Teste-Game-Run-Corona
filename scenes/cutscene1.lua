@@ -6,8 +6,6 @@ local scene = composer.newScene()
 
 local background;
 
-local soundEffect = audio.loadSound( "audio/cutscene-song.wav" )
-
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -19,21 +17,6 @@ local function gotoCutscene2()
 	composer.gotoScene( "scenes.cutscene2", "slideLeft", 200 )
 end
 
-local myText = [[Hello, if you are seeing this message, then our plans have worked well and you have been able to travel through time, now the future is in your hands, we need you to defeat the dictator of the Temporal Empire............]]
-
-local options = {
-   text = myText,
-   x = display.contentCenterX,
-   y = display.contentCenterY,
-   width = 550,
-   height = 150,
-   font = "DTM-Sans",
-   fontSize = 25,
-   align = "center"
-}
-
-local history = display.newText( options )
-
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -43,39 +26,16 @@ function scene:create( event )
 
     local sceneGroup = self.view
     -- Code here runs when the scene is first created but has not yet appeared on screen
+
+    initSounds()
+
     background1 = require("controller.BackgroundCutscene");
     background1.load(sceneGroup);
     background1.start();
 
-    local dialog = display.newRoundedRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth-50 , display.contentHeight-80, 40 )
-    dialog.strokeWidth = 2
-	dialog:setFillColor( 1 )
-	dialog:setStrokeColor( 0, 0, 0 )
-	dialog.alpha = 0.75
-
-    local ianna = display.newImageRect( sceneGroup, "assets/char/ianna.png", 50, 60 )
-    ianna.x = 65
-    ianna.y = 75
-
-    local menber = display.newText( sceneGroup, "Ianna:", 160, 75, "3Dventure.ttf", 40 )
-    menber:setFillColor( 1, 0.3, 0.8 )
-     
-	
-	history:setFillColor( 0, 0, 0 )
-
-    local skip = display.newText( sceneGroup, ">>>", 575, 300, "3Dventure.ttf", 40 )
-    skip:setFillColor( 0, 0, 0 )
-    
-
-    skip:addEventListener( "touch", gotoCutscene2 )
-
-    audio.play(soundEffect)
-
+    initDialog(sceneGroup)
 
 end
-
-
-
 
 -- show()
 function scene:show( event )
@@ -85,10 +45,10 @@ function scene:show( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
-
+    	audio.play(scene.sounds.sceneDialogSound, { loops = -1, channel = 4 })
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
-		
+      initText(sceneGroup)
 
 	end
 end
@@ -116,13 +76,56 @@ function scene:destroy( event )
 
 	local sceneGroup = self.view
 
-	history:removeSelf()
-
-
 	print("enter destroy menu")
 
 end
 
+function initDialog(sceneGroup)
+  
+  local dialog = display.newRoundedRect( sceneGroup, display.contentCenterX, display.contentCenterY, display.contentWidth-50 , display.contentHeight-80, 40 )
+  dialog.strokeWidth = 2
+  dialog:setFillColor( 1 )
+  dialog:setStrokeColor( 0, 0, 0 )
+  dialog.alpha = 0.75
+
+  local ianna = display.newImageRect( sceneGroup, "assets/char/ianna.png", 50, 60 )
+  ianna.x = 65
+  ianna.y = 75
+
+  local member = display.newText( sceneGroup, "Ianna:", 160, 75, fontTitle, 40 )
+  member:setFillColor( 1, 0.3, 0.8 )
+
+  local skip = display.newText( sceneGroup, ">>>", 575, 300, fontTitle, 40 )
+  skip:setFillColor( 0, 0, 0 )
+
+  skip:addEventListener( "touch", gotoCutscene2 )
+end
+
+function initText(sceneGroup)
+  local myText = "Hello, if you are seeing this message,then our plans have worked well and you have been able to travel through time, now the future is in your hands, we need you to defeat the dictator of the Temporal Empire [...]"
+
+  local options = {
+     parent = sceneGroup,
+     text = myText,
+     x = display.contentCenterX,
+     y = display.contentCenterY,
+     width = 450,
+     font = fontDialog,
+     fontSize = 25,
+     align = "justify"
+  }
+
+  local history = display.newText( options )
+  history:setFillColor( 0, 0, 0 )
+
+  transition.from( history, { y = altura, time = 540, transition = easing.outQuad } )
+end
+
+function initSounds()
+    scene.sounds = {
+        sceneDialogSound = audio.loadSound("audio/loop/dialog.ogg"),
+    }
+end
 
 -- -----------------------------------------------------------------------------------
 -- Scene event function listeners

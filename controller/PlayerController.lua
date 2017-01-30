@@ -2,6 +2,7 @@ display.setStatusBar( display.HiddenStatusBar )
 math.randomseed(os.time())
 
 local fisica = require("physics")
+local composer = require("composer")
 
 local alturaTela = display.contentHeight
 local larguraTela = display.contentWidth
@@ -67,6 +68,10 @@ local animacaoPersonagem = {
 
 local timerIdPula
 
+-- Pega a cena atual
+local scene = composer.getScene( composer.getSceneName( "current" ) )
+local sounds = scene.sounds
+
 function Player.load(sceneGroup)
 
 	fisica.setGravity( 0, 30 )
@@ -111,13 +116,13 @@ function Player.load(sceneGroup)
 	joint3 = fisica.newJoint("piston", torax, cabeca, torax.x, torax.y, 0, 1)
 
 	joint.isLimitEnabled = true
-	joint:setLimits( -1, 3 )
+	joint:setLimits( -1, 1 )
 
 	joint2.isLimitEnabled = true
 	joint2:setLimits( -1, 1 )
 
 	joint3.isLimitEnabled = true
-	joint3:setLimits( -1, 0 )
+	joint3:setLimits( -1, 1 )
 
 	playerCollisionFront = display.newRect(sceneGroup, pernas.x + 90, pernas.y, 2, 30);
 	playerCollisionFront.anchorX = 0
@@ -144,7 +149,7 @@ function Player.load(sceneGroup)
 
 	timerIdPosicao = timer.performWithDelay(1, mudaPosicaoCollision, 0)
 
-	local btPula = display.newCircle(sceneGroup, 50, alturaTela-25, 40)
+	local btPula = display.newCircle(sceneGroup, 50, alturaTela-25, 45)
 	btPula:setFillColor(0,0,0)
 	btPula.alpha = 0.6
 	btPula:addEventListener("tap", pula)
@@ -171,7 +176,7 @@ end
 function particula()
 	local tiroBasic = display.newEmitter(tiroBasicData)
 	sceneGroupGlobal:insert(tiroBasic)
-
+	audio.play(sounds.fire)
 	tiroBasic.x = bracos.x - 25
 	tiroBasic.y = bracos.y
 	fisica.addBody(tiroBasic, "kinematic", {shape = { 65, 5, 65, -5, 50, 0 }});
@@ -184,8 +189,9 @@ function pula()
 	if(pernas.canJump > 0) then
     	pernas:pause()
 		pernas:applyForce( 0, -25, pernas.x, pernas.y )
-		print("pula!")
+		audio.play(sounds.jump)
 		timerIdPula = timer.performWithDelay(500, playCorre, 1)
+		print("pula!")
 	end
 end
 
@@ -212,7 +218,7 @@ end
 
 function Player.pauseTimer()
 	timer.pause(timerIdPosicao)
-	timer.pause(timerIdPula)
+	-- timer.pause(timerIdPula)
 	pernas:pause()
 end
 
