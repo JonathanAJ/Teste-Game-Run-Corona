@@ -18,7 +18,10 @@ function scene:show( event )
  
     if ( phase == "will" ) then
 		local parent = event.parent  --reference to the parent scene object
-	    parent:resumeGame()
+	    parent.resumeGame()
+        parent.hideScoreGame()
+
+        local score = parent.getScore()
 
         local modal = display.newRoundedRect(sceneGroup,
                                              display.contentCenterX,
@@ -28,9 +31,9 @@ function scene:show( event )
                                         display.contentCenterX,
                                         display.contentCenterY - 90, fontTitle, 40 )
 
-        local score = display.newText(sceneGroup, "11280",
+        local score = display.newText(sceneGroup, score.." m",
                                         display.contentCenterX,
-                                        display.contentCenterY - 30, fontDialog, 80 )
+                                        display.contentCenterY - 30, fontDialog, 60 )
 
         local retornaTxt = display.newText(sceneGroup, "RELOAD",
                                         display.contentCenterX - 65,

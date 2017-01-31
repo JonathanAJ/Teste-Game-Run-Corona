@@ -72,11 +72,13 @@ local timerIdPula
 local scene = composer.getScene( composer.getSceneName( "current" ) )
 local sounds = scene.sounds
 
+local sceneGroupLocal
+
 function Player.load(sceneGroup)
 
-	fisica.setGravity( 0, 30 )
+	fisica.setGravity( 0, 35 )
 
-	sceneGroupGlobal = sceneGroup
+	sceneGroupLocal = sceneGroup
 
 	pernas = display.newSprite(sceneGroup, spritesPersonagem, animacaoPersonagem)
 	pernas:setSequence( "correndo" )
@@ -86,11 +88,6 @@ function Player.load(sceneGroup)
 	pernas.y = alturaTela - 50
 	pernas.myName = "pernas"
 	pernas.canJump = 0
-
-	torax = display.newImage(sceneGroup, spritesPersonagem, 3)
-	torax.x = 130
-	torax.y = alturaTela - 70
-	torax.myName = "torax"
 
 	bracos = display.newImage(sceneGroup, spritesPersonagem, 2)
 	bracos.x = 135
@@ -102,21 +99,15 @@ function Player.load(sceneGroup)
 	cabeca.y = alturaTela - 95
 	cabeca.myName = "cabeca"
 
-	fisica.addBody(pernas, "dynamic");
-	fisica.addBody(torax, "dynamic");
-	fisica.addBody(bracos, "dynamic");
-	fisica.addBody(cabeca, "dynamic");
+	fisica.addBody(pernas, "dynamic", {bounce = 0});
+	fisica.addBody(bracos, "dynamic", {friction = 0.3});
+	fisica.addBody(cabeca, "dynamic", {friction = 0.3});
 	pernas.isFixedRotation = true;
-	torax.isFixedRotation = true;
 	bracos.isFixedRotation = true;
 	cabeca.isFixedRotation = true;
 
-	joint = fisica.newJoint("piston", pernas, torax, pernas.x, pernas.y, 0, 1)
-	joint2 = fisica.newJoint("piston", torax, bracos, torax.x, torax.y, 0, 1)
-	joint3 = fisica.newJoint("piston", torax, cabeca, torax.x, torax.y, 0, 1)
-
-	joint.isLimitEnabled = true
-	joint:setLimits( -1, 1 )
+	joint2 = fisica.newJoint("piston", pernas, bracos, pernas.x, pernas.y, 0, 1)
+	joint3 = fisica.newJoint("piston", bracos, cabeca, bracos.x, bracos.y, 0, 1)
 
 	joint2.isLimitEnabled = true
 	joint2:setLimits( -1, 1 )
@@ -158,7 +149,7 @@ end
 function atirar(event)
 	if(event.x > display.contentCenterX) then
 		print("atirou");
-		torax:applyForce( -8, 0, torax.x, torax.y )
+		bracos:applyForce( -8, 0, bracos.x, bracos.y )
 		particula()
 	end
 end
@@ -175,7 +166,7 @@ end
 
 function particula()
 	local tiroBasic = display.newEmitter(tiroBasicData)
-	sceneGroupGlobal:insert(tiroBasic)
+	sceneGroupLocal:insert(tiroBasic)
 	audio.play(sounds.fire)
 	tiroBasic.x = bracos.x - 25
 	tiroBasic.y = bracos.y

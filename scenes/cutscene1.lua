@@ -4,22 +4,11 @@ math.randomseed(os.time())
 local composer = require("composer")
 local scene = composer.newScene()
 
-local background;
-
--- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
--- This is a good place to put variables and functions that need to be available scene
--- wide.
--- -----------------------------------------------------------------------------------
+local background
 
 local function gotoCutscene2()
 	composer.gotoScene( "scenes.cutscene2", "slideLeft", 200 )
 end
-
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
 
 -- create()
 function scene:create( event )
@@ -29,9 +18,9 @@ function scene:create( event )
 
     initSounds()
 
-    background1 = require("controller.BackgroundCutscene");
-    background1.load(sceneGroup);
-    background1.start();
+    background = require("controller.BackgroundController");
+    background.load(sceneGroup, {name = "cutscene", r = 0.5, g = 0, b = 0.6});
+    background.start();
 
     initDialog(sceneGroup)
 
@@ -62,7 +51,8 @@ function scene:hide( event )
 
 	if ( phase == "will" ) then
 		-- roda assim que a cena for ocultada	
-	    --audio.stop()		
+	    --audio.stop()
+    background.stop()
 		composer.removeScene("scenes.cutscene1")
 	elseif ( phase == "did" ) then
 		-- roda depois que a cena for ocultada
@@ -108,7 +98,7 @@ function initText(sceneGroup)
      parent = sceneGroup,
      text = myText,
      x = display.contentCenterX,
-     y = display.contentCenterY,
+     y = display.contentCenterY + 20,
      width = 450,
      font = fontDialog,
      fontSize = 25,

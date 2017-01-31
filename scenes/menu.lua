@@ -36,7 +36,7 @@ function scene:show( event )
 
 	if ( phase == "will" ) then
 		-- Code here runs when the scene is still off screen (but is about to come on screen)
-	    background.load(sceneGroup)
+	    background.load(sceneGroup, {name = "game"})
         background.start()
     	audio.play(scene.sounds.sceneOpenSound, { loops = -1, channel = 2 })
 

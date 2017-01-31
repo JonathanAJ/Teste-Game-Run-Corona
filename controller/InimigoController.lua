@@ -3,14 +3,21 @@ math.randomseed(os.time())
 
 local fisica = require("physics")
 local composer = require("composer")
+local score = require ("controller.ScoreController")
 
 -- Pega a cena atual
 local scene = composer.getScene( composer.getSceneName( "current" ) )
 local sounds = scene.sounds
 
+-- var locais
 local Inimigo = {}
-
 local sceneGroupLocal
+local flagColisaoCabeca
+local flagColisaoTorax
+local flagColisaoBracos
+local flagColisaoPernas
+local spritesPersonagem
+local animacaoPersonagem
 
 function Inimigo.load(sceneGroup)
 	sceneGroupLocal = sceneGroup
@@ -20,7 +27,7 @@ function Inimigo.load(sceneGroup)
 	flagColisaoBracos = false
 	flagColisaoPernas = false
 
-	options = {
+	local options = {
 	    width = 125,
 	    height = 128,
 	    numFrames = 2
@@ -41,9 +48,7 @@ function Inimigo.load(sceneGroup)
 end
 
 function updatePtero(sceneGroup)
-	timerPtero = timer.performWithDelay(1500, initPtero, 0)
-	-- timerPtero = timer.performWithDelay(10, initPtero, 0)
-	timerPtero.params = { myParamScene = sceneGroup}
+	timerPtero = timer.performWithDelay(1000, initPtero, 0)
 end
 
 function Inimigo.pauseTimer()
@@ -53,29 +58,38 @@ end
 
 function initPtero(event)
 
-	local params = event.source.params
+	local dificuty
+	local randomTime
 
-	ptero = display.newSprite(params.myParamScene, spritesPersonagem, animacaoPersonagem )
+	local ptero = createPtero()
+	local level = score.getLevel()
+
+	if(level < 80) then
+		dificuty = level * 10
+	else
+		dificuty = 800
+	end
+
+	randomTime = math.random(1000 - dificuty, 2000 - dificuty)
+
+	transition.to( ptero, { time = randomTime, x = -100, onComplete = clear })
+end
+
+function createPtero()
+	local ptero = display.newSprite(sceneGroupLocal, spritesPersonagem, animacaoPersonagem )
 	ptero.myName = "inimigoPtero"
 	ptero:setSequence("voando")
 	ptero:play()
-
-	local randomDistance = math.random(200, 2000)
-
-	local randomTime = randomDistance * 10
-
-	ptero.x = display.contentWidth + randomDistance
-	ptero.y = display.contentCenterY + 50
-
-	fisica.addBody(ptero, "dynamic", {chain = {-64, -5, 22, -64, 64, 0, 22, 64, -20, 38, -20, -5},
-        connectFirstAndLastChainVertex = true})
+	ptero.x = largura + 100
+	ptero.y = centerY + 50
+	fisica.addBody(ptero, "dynamic",
+		{chain = {-64, -5, 22, -64, 64, 0, 22, 64, -20, 38, -20, -5},
+    	 connectFirstAndLastChainVertex = true})
 	ptero.gravityScale = 0
-	ptero.isFixedRotation = true;
-
+	ptero.isFixedRotation = true
 	ptero.collision = colisao
 	ptero:addEventListener( "collision" )
-
-	transition.to( ptero, { time = randomTime, x = -250, onComplete = clear })
+	return ptero
 end
 
 function colisao( self, event )
@@ -122,16 +136,7 @@ end
 
 function gameOver(object)
 	audio.play(sounds.gameover)
-
-    local background = require("controller.BackgroundController")
-    background.modalAlpha(sceneGroupLocal)
-
-	local options = {
-	    effect = "fromTop",
-	    time = 500,
-	    isModal = true
-	}
-	composer.showOverlay( "scenes.modalRetorno", options )
+	score.show()
 end
 
 return Inimigo

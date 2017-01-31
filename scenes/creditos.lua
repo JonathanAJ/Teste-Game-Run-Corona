@@ -20,7 +20,7 @@ function scene:create( event )
 
     initSounds()
     
-    background = require("controller.BackgroundCreditosController");
+    background = require("controller.BackgroundController");
 end
 
 
@@ -32,7 +32,7 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
-        background.load(sceneGroup)
+        background.load(sceneGroup, {name = "creditos"})
         background.start()
         audio.play(scene.sounds.sceneCreditSound, { loops = -1, channel = 3 })
 
