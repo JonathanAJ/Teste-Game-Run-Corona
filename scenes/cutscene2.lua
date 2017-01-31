@@ -108,11 +108,16 @@ function initDialog(sceneGroup)
     italo.x = 65
     italo.y = 75
 
-    local member = display.newText( sceneGroup, "Italo:", 160, 75, fontTitle, 40 )
+    local member = display.newText( sceneGroup, "Dr. Italo:", 210, 75, fontTitle, 40 )
     member:setFillColor( 0, 0.5, 1 )
 
     local skip = display.newText( sceneGroup, ">>>", 575, 300, fontTitle, 40 )
     skip:setFillColor( 0, 0, 0 )
+
+    transition.from( italo, { xScale = 3, yScale = 3, time = 440, transition = easing.outQuad } )
+  	transition.from( member, { y = altura, time = 540, transition = easing.outQuad } )
+ 	transition.from( skip, { y = 100, time = 540, transition = easing.outQuad } )
+
     skip:addEventListener( "touch", gotoMenu )
 end
 

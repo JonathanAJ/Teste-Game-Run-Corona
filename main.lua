@@ -16,4 +16,4 @@ centerY = display.contentCenterY
 
 -- composer.gotoScene("scenes.cutscene1", "fade", 1000)
 -- composer.gotoScene("scenes.menu", "fade", 1000)
-composer.gotoScene("scenes.game", "fade", 1000)
+composer.gotoScene("scenes.cutscene1", "fade", 1000)

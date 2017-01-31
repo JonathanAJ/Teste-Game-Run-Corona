@@ -92,11 +92,15 @@ function initDialog(sceneGroup)
   ianna.x = 65
   ianna.y = 75
 
-  local member = display.newText( sceneGroup, "Ianna:", 160, 75, fontTitle, 40 )
+  local member = display.newText( sceneGroup, "Dr. Ianna:", 210, 75, fontTitle, 40 )
   member:setFillColor( 1, 0.3, 0.8 )
 
   local skip = display.newText( sceneGroup, ">>>", 575, 300, fontTitle, 40 )
   skip:setFillColor( 0, 0, 0 )
+
+  transition.from( ianna, { xScale = 3, yScale = 3, time = 440, transition = easing.outQuad } )
+  transition.from( member, { y = altura, time = 540, transition = easing.outQuad } )
+  transition.from( skip, { y = 100, time = 540, transition = easing.outQuad } )
 
   skip:addEventListener( "touch", gotoCutscene2 )
 end
@@ -119,6 +123,9 @@ function initText(sceneGroup)
   history:setFillColor( 0, 0, 0 )
 
   transition.from( history, { y = altura, time = 540, transition = easing.outQuad } )
+
+
+ 
 end
 
 function initSounds()
