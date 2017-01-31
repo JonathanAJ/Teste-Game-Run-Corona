@@ -82,7 +82,7 @@ function initTextCred(sceneGroup)
     {
         parent = sceneGroup,
         text = "Ianna Leal",     
-        x = 350,
+        x = 435,
         y = 150,
         width = 300,
         font = fontDialog,
@@ -93,7 +93,7 @@ function initTextCred(sceneGroup)
     {
         parent = sceneGroup,
         text = "Italo Oliveira",     
-        x = 350,
+        x = 435,
         y = 220,
         width = 300,
         font = fontDialog,
@@ -104,7 +104,7 @@ function initTextCred(sceneGroup)
     {
         parent = sceneGroup,
         text = "Jonathan Alves",     
-        x = 350,
+        x = 435,
         y = 290,
         width = 300,
         font = fontDialog,
@@ -116,25 +116,25 @@ function initTextCred(sceneGroup)
     cred:setFillColor( 0, 0, 0 )
 
     local ianna = display.newImageRect( sceneGroup, "assets/char/ianna.png", 50, 60 )
-    ianna.x = 150
+    ianna.x = 250
     ianna.y = 150
 
     local iannatxt = display.newText(txt1)
-    iannatxt:setFillColor( 0, 0, 0 )
+    iannatxt:setFillColor( 1, 1, 1 )
 
     local italo = display.newImageRect( sceneGroup, "assets/char/italo.png", 65, 70 )
-    italo.x = 150
+    italo.x = 250
     italo.y = 220
 
     local italoTxt = display.newText(txt2)
-    italoTxt:setFillColor( 0, 0, 0 )
+    italoTxt:setFillColor( 1, 1, 1 )
 
     local jon = display.newImageRect( sceneGroup, "assets/char/jon.png", 65, 70 )
-    jon.x = 150
+    jon.x = 250
     jon.y = 290
 
     local jonTxt = display.newText(txt3)
-    jonTxt:setFillColor( 0, 0, 0 )
+    jonTxt:setFillColor( 1, 1, 1 )
 
     local returnButton = display.newText( sceneGroup, "<<<", 200, 150, fontTitle, 40 )
     returnButton.x = 50
